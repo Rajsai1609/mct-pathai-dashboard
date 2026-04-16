@@ -70,17 +70,14 @@ export async function fetchStudentCount(): Promise<number> {
   return count ?? 0;
 }
 
-export async function fetchAllStudents(): Promise<Student[]> {
+export async function fetchStudents(): Promise<Student[]> {
   const client = getClient();
   if (!client) return [];
   const { data, error } = await client
     .from("students")
-    .select("id, name, email")
-    .order("name");
-  if (error) {
-    console.error("fetchAllStudents:", error.message);
-    return [];
-  }
+    .select("id, name")
+    .order("name", { ascending: true });
+  if (error) return [];
   return (data ?? []) as Student[];
 }
 

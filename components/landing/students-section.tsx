@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fetchAllStudents } from "@/lib/supabase";
+import { fetchStudents } from "@/lib/supabase";
 import { getLogoGradient } from "@/lib/utils";
 
 export async function StudentsSection() {
-  const students = await fetchAllStudents();
+  const students = await fetchStudents();
 
   return (
     <section id="students" className="py-24 container mx-auto px-6">
