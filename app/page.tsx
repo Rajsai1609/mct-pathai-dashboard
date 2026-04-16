@@ -7,6 +7,7 @@ import { ComparisonTable } from "@/components/landing/comparison-table";
 import { StatsSection } from "@/components/landing/stats-section";
 import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
+import { ContactSection } from "@/components/landing/contact-section";
 
 function StudentsSkeleton() {
   return (
@@ -65,10 +66,22 @@ export default function HomePage() {
 
         {/* 8 — Urgency CTA */}
         <CtaSection />
+
+        {/* 9 — Contact */}
+        <ContactSection />
       </div>
 
-      <footer className="border-t border-white/5 py-8 text-center text-slate-500 text-sm">
-        © {new Date().getFullYear()} MCTechnology LLC · MCT PathAI
+      <footer className="border-t border-white/5 py-8 text-center text-slate-500 text-sm space-y-1">
+        <p>© {new Date().getFullYear()} MCTechnology LLC · MCT PathAI</p>
+        <p>
+          <a href="mailto:connect@theteammc.com" className="hover:text-slate-300 transition-colors">
+            📧 connect@theteammc.com
+          </a>
+          {" · "}
+          <a href="tel:+12065528424" className="hover:text-slate-300 transition-colors">
+            📱 +1 (206) 552-8424
+          </a>
+        </p>
       </footer>
     </main>
   );
