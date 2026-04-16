@@ -69,9 +69,12 @@ export default function HomePage() {
 
       <footer className="border-t border-white/5 py-8 text-center text-slate-500 text-sm space-y-2">
         <p>© {new Date().getFullYear()} MCTechnology LLC · MCT PathAI</p>
-        <p className="flex items-center justify-center gap-4">
+        <p className="flex items-center justify-center flex-wrap gap-4">
           <a href="mailto:connect@theteammc.com" className="hover:text-slate-300 transition-colors">
             📧 connect@theteammc.com
+          </a>
+          <a href="tel:+12065528424" className="hover:text-slate-300 transition-colors">
+            📱 +1 (206) 552-8424
           </a>
           <a
             href="https://www.linkedin.com/company/106539005/"

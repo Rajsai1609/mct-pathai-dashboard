@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 const LINKEDIN_URL = "https://www.linkedin.com/company/106539005/";
 
@@ -27,8 +27,8 @@ export function ContactSection() {
           </p>
         </div>
 
-        {/* Two cards side by side */}
-        <div className="grid sm:grid-cols-2 gap-5">
+        {/* Three cards */}
+        <div className="grid sm:grid-cols-3 gap-5">
           {/* Email */}
           <a
             href="mailto:connect@theteammc.com"
@@ -43,6 +43,24 @@ export function ContactSection() {
               </p>
               <p className="text-white font-semibold text-sm group-hover:text-violet-300 transition-colors truncate">
                 connect@theteammc.com
+              </p>
+            </div>
+          </a>
+
+          {/* Phone */}
+          <a
+            href="tel:+12065528424"
+            className="glass rounded-2xl p-6 border border-white/10 flex items-center gap-4 transition-all duration-200 hover:border-green-500/40 hover:shadow-[0_0_30px_rgba(34,197,94,0.25)] group"
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+              <Phone className="w-5 h-5 text-white" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-0.5">
+                Call Us
+              </p>
+              <p className="text-white font-semibold text-sm group-hover:text-green-300 transition-colors truncate">
+                +1 (206) 552-8424
               </p>
             </div>
           </a>
