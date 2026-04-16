@@ -92,7 +92,7 @@ interface ScoreWithJob {
 
 export async function fetchStudentJobs(
   studentId: string,
-  minScore = 0.4,
+  minScore = 0.25,
   limit = 500,
 ): Promise<JobMatch[]> {
   const client = getClient();

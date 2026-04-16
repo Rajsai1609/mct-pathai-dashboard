@@ -7,14 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 const GRADE_THRESHOLDS: [number, Grade][] = [
-  [0.70, "A+"],
-  [0.60, "A"],
-  [0.50, "B+"],
-  [0.40, "B"],
-  [0.30, "C+"],
-  [0.20, "C"],
-  [0.10, "D"],
-  [0.00, "F"],
+  [0.60, "A+"],
+  [0.50, "A"],
+  [0.40, "B+"],
+  [0.30, "B"],
+  [0.25, "C+"],
+  [0.00, "C"],
 ];
 
 export function scoreToGrade(score: number): Grade {
