@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { Dimensions } from "@/components/landing/dimensions";
 import { ValueProps } from "@/components/landing/value-props";
 import { ComparisonTable } from "@/components/landing/comparison-table";
 import { StatsSection } from "@/components/landing/stats-section";
@@ -49,7 +50,10 @@ export default function HomePage() {
         {/* 4 — How it works */}
         <HowItWorks />
 
-        {/* 5 — Built only for international students */}
+        {/* 5 — 10-dimensional AI matching */}
+        <Dimensions />
+
+        {/* 6 — Built only for international students */}
         <ValueProps />
 
         {/* 6 — Comparison table */}
