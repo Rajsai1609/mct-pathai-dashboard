@@ -43,6 +43,24 @@ export async function fetchStudent(studentId: string): Promise<Student | null> {
   return data as Student;
 }
 
+const USA_KEYWORDS = new Set([
+  "Alabama","Alaska","Arizona","Arkansas","California","Colorado",
+  "Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho",
+  "Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine",
+  "Maryland","Massachusetts","Michigan","Minnesota","Mississippi",
+  "Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey",
+  "New Mexico","New York","North Carolina","North Dakota","Ohio",
+  "Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina",
+  "South Dakota","Tennessee","Texas","Utah","Vermont","Virginia",
+  "Washington","West Virginia","Wisconsin","Wyoming",
+  "United States","USA","US","Remote","Anywhere","Hybrid",
+]);
+
+function isUsaJob(location: string | null | undefined): boolean {
+  if (!location) return true;   // no location = keep (likely remote)
+  return Array.from(USA_KEYWORDS).some((kw) => location.includes(kw));
+}
+
 // Shape PostgREST returns for the FK join
 interface ScoreWithJob {
   fit_score: number;
@@ -85,8 +103,9 @@ export async function fetchStudentJobs(
 
   for (const row of rows) {
     const job = row.scraped_jobs;
-    if (!job) continue;                    // FK row had no match (should not happen)
-    if (seenUrls.has(job.url)) continue;   // deduplicate by URL
+    if (!job) continue;                       // FK row had no match
+    if (!isUsaJob(job.location)) continue;    // USA-only filter
+    if (seenUrls.has(job.url)) continue;      // deduplicate by URL
     seenUrls.add(job.url);
 
     merged.push({
