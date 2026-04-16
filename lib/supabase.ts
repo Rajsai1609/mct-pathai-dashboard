@@ -14,6 +14,27 @@ function getClient(): SupabaseClient | null {
   return _client;
 }
 
+export interface WaitlistEntry {
+  name: string;
+  email: string;
+  visa_status: string;
+  target_role: string;
+}
+
+export async function submitWaitlist(
+  entry: WaitlistEntry,
+): Promise<{ ok: boolean; duplicate: boolean; error?: string }> {
+  const client = getClient();
+  if (!client) return { ok: false, duplicate: false, error: "Supabase not configured." };
+
+  const { error } = await client.from("waitlist").insert(entry);
+  if (!error) return { ok: true, duplicate: false };
+
+  // Postgres unique-violation code = 23505
+  if (error.code === "23505") return { ok: false, duplicate: true };
+  return { ok: false, duplicate: false, error: error.message };
+}
+
 export async function fetchAllStudents(): Promise<Student[]> {
   const client = getClient();
   if (!client) return [];
