@@ -3,7 +3,6 @@ import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { Dimensions } from "@/components/landing/dimensions";
 import { ValueProps } from "@/components/landing/value-props";
-import { ComparisonTable } from "@/components/landing/comparison-table";
 import { StatsSection } from "@/components/landing/stats-section";
 import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
@@ -55,9 +54,6 @@ export default function HomePage() {
 
         {/* 6 — Built only for international students */}
         <ValueProps />
-
-        {/* 6 — Comparison table */}
-        <ComparisonTable />
 
         {/* 7 — Live student dashboards */}
         <Suspense fallback={<StudentsSkeleton />}>
