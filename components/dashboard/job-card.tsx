@@ -10,9 +10,25 @@ interface JobCardProps {
   job: JobMatch;
 }
 
+const SOURCE_MAP: [string, string, string][] = [
+  ["ashby",      "Ashby",      "bg-pink-500/15 text-pink-300 border-pink-500/25"],
+  ["greenhouse", "Greenhouse", "bg-green-500/15 text-green-300 border-green-500/25"],
+  ["lever",      "Lever",      "bg-cyan-500/15 text-cyan-300 border-cyan-500/25"],
+  ["linkedin",   "LinkedIn",   "bg-blue-500/15 text-blue-300 border-blue-500/25"],
+  ["indeed",     "Indeed",     "bg-indigo-500/15 text-indigo-300 border-indigo-500/25"],
+];
+
+function getSource(id: string): [string, string] {
+  for (const [prefix, label, cls] of SOURCE_MAP) {
+    if (id.startsWith(prefix)) return [label, cls];
+  }
+  return ["Other", "bg-slate-500/15 text-slate-400 border-slate-500/25"];
+}
+
 export function JobCard({ job }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
+  const [sourceLabel, sourceCls] = getSource(job.id);
 
   return (
     <div className="glass glass-hover rounded-2xl p-5 flex flex-col gap-4">
@@ -54,7 +70,7 @@ export function JobCard({ job }: JobCardProps) {
         )}
       </div>
 
-      {/* Grade badge + visa badges */}
+      {/* Grade badge + source + visa badges */}
       <div className="flex items-center gap-2 flex-wrap">
         <span
           className={cn(
@@ -64,6 +80,10 @@ export function JobCard({ job }: JobCardProps) {
         >
           {job.grade}
         </span>
+
+        <Badge className={cn("text-[10px] py-0 px-2", sourceCls)}>
+          {sourceLabel}
+        </Badge>
 
         {job.h1b_sponsor === true && (
           <Badge className="text-[10px] py-0 px-2 bg-violet-500/15 text-violet-300 border-violet-500/25 gap-1">
