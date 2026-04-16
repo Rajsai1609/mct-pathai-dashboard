@@ -5,12 +5,14 @@ import { fetchStudent, fetchStudentJobs } from "@/lib/supabase";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { getLogoGradient } from "@/lib/utils";
 
+// Next.js 15+: params is a Promise — must be awaited
 interface PageProps {
-  params: { student_id: string };
+  params: Promise<{ student_id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const student = await fetchStudent(params.student_id);
+  const { student_id } = await params;
+  const student = await fetchStudent(student_id);
   return {
     title: student
       ? `${student.name} — MCT PathAI Dashboard`
@@ -19,9 +21,11 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function DashboardPage({ params }: PageProps) {
+  const { student_id } = await params;
+
   const [student, jobs] = await Promise.all([
-    fetchStudent(params.student_id),
-    fetchStudentJobs(params.student_id),
+    fetchStudent(student_id),
+    fetchStudentJobs(student_id),
   ]);
 
   if (!student) notFound();
