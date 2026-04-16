@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { Hero } from "@/components/landing/hero";
+import { PainPoints } from "@/components/landing/pain-points";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { ValueProps } from "@/components/landing/value-props";
+import { ComparisonTable } from "@/components/landing/comparison-table";
 import { StatsSection } from "@/components/landing/stats-section";
 import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
@@ -30,17 +33,37 @@ export default function HomePage() {
           <span className="text-white font-bold text-lg">
             MCT <span className="gradient-text">PathAI</span>
           </span>
-          <span className="text-slate-500 text-sm">Powered by MCTechnology LLC</span>
+          <span className="text-slate-500 text-sm hidden sm:block">
+            Powered by MCTechnology LLC
+          </span>
         </div>
       </nav>
 
       <div className="pt-14">
+        {/* 1 — Hero */}
         <Hero />
+
+        {/* 2 — Pain points: "Sound Familiar?" */}
+        <PainPoints />
+
+        {/* 3 — Stats bar */}
         <StatsSection />
+
+        {/* 4 — How it works */}
         <HowItWorks />
+
+        {/* 5 — Built only for international students */}
+        <ValueProps />
+
+        {/* 6 — Comparison table */}
+        <ComparisonTable />
+
+        {/* 7 — Live student dashboards */}
         <Suspense fallback={<StudentsSkeleton />}>
           <StudentsSection />
         </Suspense>
+
+        {/* 8 — Urgency CTA */}
         <CtaSection />
       </div>
 

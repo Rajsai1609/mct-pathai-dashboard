@@ -1,8 +1,8 @@
 const STATS = [
-  { value: "5,000+", label: "Jobs scraped daily", color: "text-violet-400" },
-  { value: "5",      label: "Students matched",   color: "text-blue-400"   },
-  { value: "AI",     label: "Powered scoring",    color: "text-emerald-400" },
-  { value: "Free",   label: "Early access",       color: "text-amber-400"  },
+  { value: "5,000+", label: "Jobs scraped daily",        color: "text-violet-400" },
+  { value: "500+",   label: "Matches per student",       color: "text-blue-400"   },
+  { value: "70%",    label: "Top match score",           color: "text-emerald-400" },
+  { value: "5",      label: "Students in beta",          color: "text-amber-400"  },
 ];
 
 export function StatsSection() {

@@ -1,30 +1,28 @@
-import { FileText, Brain, Briefcase } from "lucide-react";
-
 const STEPS = [
   {
-    icon: FileText,
+    icon: "🎯",
     number: "01",
-    title: "Upload Your Resume",
+    title: "Share Your Resume Once",
     description:
-      "Share your resume once. Our AI extracts your skills, experience level, and preferences automatically.",
+      "Our AI reads your skills, experience, and visa status automatically. No forms to fill out.",
     color: "text-violet-400",
     bg: "bg-violet-500/10 border-violet-500/20",
   },
   {
-    icon: Brain,
+    icon: "🤖",
     number: "02",
-    title: "AI Scoring Engine",
+    title: "AI Works While You Sleep",
     description:
-      "We scrape 5,000+ jobs daily and score each one against your profile using semantic AI and skill matching.",
+      "Every morning at 7AM we score 5,000+ fresh jobs against YOUR resume specifically — not a generic profile.",
     color: "text-blue-400",
     bg: "bg-blue-500/10 border-blue-500/20",
   },
   {
-    icon: Briefcase,
+    icon: "🚀",
     number: "03",
-    title: "Get Ranked Matches",
+    title: "Wake Up to Your Best Matches",
     description:
-      "View your personalized job feed sorted by match score. Every role is pre-filtered for visa compatibility.",
+      "Open your dashboard — top jobs ranked by fit score, all visa-friendly, ready to apply in one click.",
     color: "text-emerald-400",
     bg: "bg-emerald-500/10 border-emerald-500/20",
   },
@@ -41,7 +39,7 @@ export function HowItWorks() {
           How MCT PathAI Works
         </h2>
         <p className="text-slate-400 max-w-xl mx-auto">
-          From resume to ranked job list in minutes — fully automated.
+          Set it up once. Get ranked matches every single morning.
         </p>
       </div>
 
@@ -51,9 +49,7 @@ export function HowItWorks() {
             <span className="absolute top-6 right-6 text-4xl font-black text-white/5 select-none">
               {step.number}
             </span>
-            <div className={`inline-flex p-3 rounded-xl ${step.bg} border mb-5`}>
-              <step.icon className={`w-6 h-6 ${step.color}`} />
-            </div>
+            <span className="text-4xl mb-5 block">{step.icon}</span>
             <h3 className="text-xl font-semibold text-white mb-3">{step.title}</h3>
             <p className="text-slate-400 leading-relaxed">{step.description}</p>
           </div>
