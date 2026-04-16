@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { Hero } from "@/components/landing/hero";
-import { PainPoints } from "@/components/landing/pain-points";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { ValueProps } from "@/components/landing/value-props";
 import { ComparisonTable } from "@/components/landing/comparison-table";
@@ -44,10 +43,7 @@ export default function HomePage() {
         {/* 1 — Hero */}
         <Hero />
 
-        {/* 2 — Pain points: "Sound Familiar?" */}
-        <PainPoints />
-
-        {/* 3 — Stats bar */}
+        {/* 2 — Hero stats */}
         <StatsSection />
 
         {/* 4 — How it works */}
