@@ -1,16 +1,15 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { JobMatch, ScrapedJob, Student, StudentJobScore } from "./types";
+import type { JobMatch, ScrapedJob, Student } from "./types";
 import { scoreToGrade } from "./utils";
 
-// Lazy singleton — only created at runtime when env vars are available,
-// never at build time (which would crash with missing env vars).
+// Lazy singleton — only instantiated at runtime, never at build time.
 let _client: SupabaseClient | null = null;
 
 function getClient(): SupabaseClient | null {
   if (_client) return _client;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;   // graceful build-time degradation
+  if (!url || !key) return null;
   _client = createClient(url, key);
   return _client;
 }
@@ -22,7 +21,10 @@ export async function fetchAllStudents(): Promise<Student[]> {
     .from("students")
     .select("id, name, email")
     .order("name");
-  if (error) return [];
+  if (error) {
+    console.error("fetchAllStudents:", error.message);
+    return [];
+  }
   return (data ?? []) as Student[];
 }
 
@@ -34,8 +36,19 @@ export async function fetchStudent(studentId: string): Promise<Student | null> {
     .select("id, name, email")
     .eq("id", studentId)
     .single();
-  if (error) return null;
+  if (error) {
+    console.error("fetchStudent:", error.message);
+    return null;
+  }
   return data as Student;
+}
+
+// Shape PostgREST returns for the FK join
+interface ScoreWithJob {
+  fit_score: number;
+  skill_score: number | null;
+  semantic_score: number | null;
+  scraped_jobs: ScrapedJob | null;
 }
 
 export async function fetchStudentJobs(
@@ -46,55 +59,41 @@ export async function fetchStudentJobs(
   const client = getClient();
   if (!client) return [];
 
-  // Step 1 — scores
-  const { data: scores, error: scoresErr } = await client
+  // Single query — PostgREST resolves the FK join automatically.
+  // student_job_scores.job_id → scraped_jobs.id
+  const { data, error } = await client
     .from("student_job_scores")
-    .select("job_id, fit_score, skill_score, semantic_score")
+    .select(
+      "fit_score, skill_score, semantic_score, " +
+      "scraped_jobs(id, title, company, url, location, work_mode, " +
+      "job_category, h1b_sponsor, opt_friendly, is_entry_eligible)",
+    )
     .eq("student_id", studentId)
     .gte("fit_score", minScore)
     .order("fit_score", { ascending: false })
     .limit(limit);
 
-  if (scoresErr || !scores?.length) {
-    console.error("fetchStudentJobs scores:", scoresErr?.message);
+  if (error) {
+    console.error("fetchStudentJobs:", error.message);
     return [];
   }
+  if (!data?.length) return [];
 
-  // Step 2 — job details
-  const jobIds = (scores as unknown as StudentJobScore[]).map((s) => s.job_id);
-  const { data: jobs, error: jobsErr } = await client
-    .from("scraped_jobs")
-    .select(
-      "id, title, company, url, location, work_mode, job_category, " +
-      "scraper_score, visa_flag, h1b_sponsor, opt_friendly, is_entry_eligible",
-    )
-    .in("id", jobIds);
-
-  if (jobsErr || !jobs?.length) {
-    console.error("fetchStudentJobs jobs:", jobsErr?.message);
-    return [];
-  }
-
-  // Step 3 — merge
-  const jobMap = new Map<string, ScrapedJob>(
-    (jobs as unknown as ScrapedJob[]).map((j) => [j.id, j]),
-  );
-
-  const merged: JobMatch[] = [];
+  const rows = data as unknown as ScoreWithJob[];
   const seenUrls = new Set<string>();
+  const merged: JobMatch[] = [];
 
-  for (const score of scores as unknown as StudentJobScore[]) {
-    const job = jobMap.get(score.job_id);
-    if (!job) continue;
-    if (seenUrls.has(job.url)) continue;
+  for (const row of rows) {
+    const job = row.scraped_jobs;
+    if (!job) continue;                    // FK row had no match (should not happen)
+    if (seenUrls.has(job.url)) continue;   // deduplicate by URL
     seenUrls.add(job.url);
 
-    const fitPct = Math.round(score.fit_score * 100);
     merged.push({
       ...job,
-      fit_score: score.fit_score,
-      fit_pct: fitPct,
-      grade: scoreToGrade(score.fit_score),
+      fit_score: row.fit_score,
+      fit_pct: Math.round(row.fit_score * 100),
+      grade: scoreToGrade(row.fit_score),
     });
   }
 

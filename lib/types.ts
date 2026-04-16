@@ -12,8 +12,9 @@ export interface ScrapedJob {
   location: string;
   work_mode: "remote" | "hybrid" | "onsite" | "unknown";
   job_category: string;
-  scraper_score: number | null;
-  visa_flag: boolean;
+  // These columns do not exist in the live scraped_jobs table yet
+  scraper_score?: number | null;
+  visa_flag?: boolean;
   h1b_sponsor: boolean | null;
   opt_friendly: boolean | null;
   is_entry_eligible: boolean;
