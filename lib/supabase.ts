@@ -1,34 +1,40 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { JobMatch, ScrapedJob, Student, StudentJobScore } from "./types";
 import { scoreToGrade } from "./utils";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Lazy singleton — only created at runtime when env vars are available,
+// never at build time (which would crash with missing env vars).
+let _client: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getClient(): SupabaseClient | null {
+  if (_client) return _client;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;   // graceful build-time degradation
+  _client = createClient(url, key);
+  return _client;
+}
 
 export async function fetchAllStudents(): Promise<Student[]> {
-  const { data, error } = await supabase
+  const client = getClient();
+  if (!client) return [];
+  const { data, error } = await client
     .from("students")
     .select("id, name, email")
     .order("name");
-  if (error) {
-    console.error("fetchAllStudents:", error.message);
-    return [];
-  }
+  if (error) return [];
   return (data ?? []) as Student[];
 }
 
 export async function fetchStudent(studentId: string): Promise<Student | null> {
-  const { data, error } = await supabase
+  const client = getClient();
+  if (!client) return null;
+  const { data, error } = await client
     .from("students")
     .select("id, name, email")
     .eq("id", studentId)
     .single();
-  if (error) {
-    console.error("fetchStudent:", error.message);
-    return null;
-  }
+  if (error) return null;
   return data as Student;
 }
 
@@ -37,8 +43,11 @@ export async function fetchStudentJobs(
   minScore = 0.4,
   limit = 500,
 ): Promise<JobMatch[]> {
+  const client = getClient();
+  if (!client) return [];
+
   // Step 1 — scores
-  const { data: scores, error: scoresErr } = await supabase
+  const { data: scores, error: scoresErr } = await client
     .from("student_job_scores")
     .select("job_id, fit_score, skill_score, semantic_score")
     .eq("student_id", studentId)
@@ -52,8 +61,8 @@ export async function fetchStudentJobs(
   }
 
   // Step 2 — job details
-  const jobIds = scores.map((s: StudentJobScore) => s.job_id);
-  const { data: jobs, error: jobsErr } = await supabase
+  const jobIds = (scores as unknown as StudentJobScore[]).map((s) => s.job_id);
+  const { data: jobs, error: jobsErr } = await client
     .from("scraped_jobs")
     .select(
       "id, title, company, url, location, work_mode, job_category, " +
@@ -68,13 +77,13 @@ export async function fetchStudentJobs(
 
   // Step 3 — merge
   const jobMap = new Map<string, ScrapedJob>(
-    (jobs as ScrapedJob[]).map((j) => [j.id, j]),
+    (jobs as unknown as ScrapedJob[]).map((j) => [j.id, j]),
   );
 
   const merged: JobMatch[] = [];
   const seenUrls = new Set<string>();
 
-  for (const score of scores as StudentJobScore[]) {
+  for (const score of scores as unknown as StudentJobScore[]) {
     const job = jobMap.get(score.job_id);
     if (!job) continue;
     if (seenUrls.has(job.url)) continue;
