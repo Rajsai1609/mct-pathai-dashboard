@@ -7,6 +7,7 @@ import { StatsSection } from "@/components/landing/stats-section";
 import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
+import { fetchStudentCount } from "@/lib/supabase";
 
 function StudentsSkeleton() {
   return (
@@ -25,7 +26,8 @@ function StudentsSkeleton() {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const studentCount = await fetchStudentCount();
   return (
     <main className="min-h-screen bg-[#0f172a]">
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 backdrop-blur-md bg-[#0f172a]/80">
@@ -61,7 +63,7 @@ export default function HomePage() {
         </Suspense>
 
         {/* 8 — Urgency CTA */}
-        <CtaSection />
+        <CtaSection studentCount={studentCount} />
 
         {/* 9 — Contact */}
         <ContactSection />

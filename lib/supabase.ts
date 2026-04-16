@@ -60,6 +60,16 @@ export async function submitWaitlist(
   return { ok: false, duplicate: false, error: error.message };
 }
 
+export async function fetchStudentCount(): Promise<number> {
+  const client = getClient();
+  if (!client) return 0;
+  const { count, error } = await client
+    .from("students")
+    .select("id", { count: "exact", head: true });
+  if (error) return 0;
+  return count ?? 0;
+}
+
 export async function fetchAllStudents(): Promise<Student[]> {
   const client = getClient();
   if (!client) return [];
