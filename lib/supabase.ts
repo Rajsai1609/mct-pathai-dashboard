@@ -19,6 +19,31 @@ export interface WaitlistEntry {
   email: string;
   visa_status: string;
   target_role: string;
+  resume_url?: string;
+}
+
+// Upload a resume file to Supabase Storage bucket "resumes".
+// Returns the public URL on success, throws on failure.
+export async function uploadResume(
+  email: string,
+  file: File,
+): Promise<string> {
+  const client = getClient();
+  if (!client) throw new Error("Supabase not configured.");
+
+  // Sanitize email for use as a storage folder name
+  const folder = email.toLowerCase().replace(/[^a-z0-9._-]/g, "_");
+  const ext = file.name.split(".").pop() ?? "pdf";
+  const path = `${folder}/resume.${ext}`;
+
+  const { error } = await client.storage
+    .from("resumes")
+    .upload(path, file, { upsert: true, contentType: file.type });
+
+  if (error) throw new Error(error.message);
+
+  const { data } = client.storage.from("resumes").getPublicUrl(path);
+  return data.publicUrl;
 }
 
 export async function submitWaitlist(
