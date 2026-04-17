@@ -7,7 +7,7 @@ import { StatsSection } from "@/components/landing/stats-section";
 import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
-import { fetchStudentCount } from "@/lib/supabase";
+import { fetchJobCount, fetchStudentCount } from "@/lib/supabase";
 
 export const revalidate = 300; // revalidate every 5 minutes
 
@@ -29,7 +29,10 @@ function StudentsSkeleton() {
 }
 
 export default async function HomePage() {
-  const studentCount = await fetchStudentCount();
+  const [studentCount, jobCount] = await Promise.all([
+    fetchStudentCount(),
+    fetchJobCount(),
+  ]);
   return (
     <main className="min-h-screen bg-[#0f172a]">
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 backdrop-blur-md bg-[#0f172a]/80">
@@ -45,7 +48,7 @@ export default async function HomePage() {
 
       <div className="pt-14">
         {/* 1 — Hero */}
-        <Hero />
+        <Hero jobCount={jobCount} />
 
         {/* 2 — Hero stats */}
         <StatsSection />

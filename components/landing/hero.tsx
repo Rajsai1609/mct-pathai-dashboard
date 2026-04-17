@@ -6,8 +6,16 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WaitlistModal } from "./waitlist-modal";
 
-export function Hero() {
+interface HeroProps {
+  jobCount?: number;
+}
+
+export function Hero({ jobCount = 0 }: HeroProps) {
   const [open, setOpen] = useState(false);
+
+  const jobBadge = jobCount > 0
+    ? `${jobCount.toLocaleString()}+ Jobs Daily`
+    : "Thousands of Jobs Daily";
 
   return (
     <>
@@ -30,7 +38,7 @@ export function Hero() {
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-sm text-violet-300 mb-8 animate-fade-in">
             <Sparkles className="w-4 h-4" />
-            <span>AI-Powered · F1 &amp; OPT Friendly · 5,000+ Jobs Daily</span>
+            <span>AI-Powered · F1 &amp; OPT Friendly · {jobBadge}</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-fade-in">

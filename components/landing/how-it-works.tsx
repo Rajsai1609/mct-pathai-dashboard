@@ -13,7 +13,7 @@ const STEPS = [
     number: "02",
     title: "AI Works While You Sleep",
     description:
-      "Every morning at 7AM we score 5,000+ fresh jobs against YOUR resume specifically — not a generic profile.",
+      "Every morning at 7AM we score thousands of fresh jobs against YOUR resume specifically — not a generic profile.",
     color: "text-blue-400",
     bg: "bg-blue-500/10 border-blue-500/20",
   },

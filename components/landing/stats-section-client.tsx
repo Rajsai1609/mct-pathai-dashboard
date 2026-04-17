@@ -38,13 +38,20 @@ function useCountUp(target: number, duration = 1600, active: boolean) {
   return value;
 }
 
+function getLastUpdatedLabel(): string {
+  const now = new Date();
+  const today7am = new Date(now);
+  today7am.setHours(7, 0, 0, 0);
+  const lastRun = now >= today7am
+    ? today7am
+    : new Date(today7am.getTime() - 86_400_000);
+  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  return `Last updated: ${lastRun.toLocaleDateString("en-US", opts)} at 7:00 AM`;
+}
+
 function StatCard({ stat, active }: { stat: Stat; active: boolean }) {
   const count = useCountUp(stat.target, 1600, active);
-
-  const display =
-    stat.target >= 1000
-      ? (count / 1000).toFixed(count >= stat.target ? 0 : 1) + "k"
-      : String(count);
+  const display = count.toLocaleString();
 
   return (
     <div
@@ -73,7 +80,6 @@ function StatCard({ stat, active }: { stat: Stat; active: boolean }) {
           backgroundClip: "text",
         }}
       >
-        {/* Tailwind gradient via wrapper */}
         <span
           className={`bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}
         >
@@ -96,6 +102,11 @@ export function StatsSectionClient({
 }: StatsSectionClientProps) {
   const ref = useRef<HTMLElement>(null);
   const [active, setActive] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState("");
+
+  useEffect(() => {
+    setLastUpdated(getLastUpdatedLabel());
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -112,14 +123,14 @@ export function StatsSectionClient({
     {
       target: jobCount,
       suffix: "+",
-      label: "Jobs scraped daily",
+      label: "Active Jobs Indexed",
       gradient: "from-violet-400 to-purple-400",
       glow: "rgba(139,92,246,0.35)",
     },
     {
       target: matchCount,
       suffix: "+",
-      label: "Matches per student",
+      label: "AI Matches Scored",
       gradient: "from-blue-400 to-cyan-400",
       glow: "rgba(59,130,246,0.35)",
     },
@@ -146,6 +157,11 @@ export function StatsSectionClient({
           <StatCard key={i} stat={s} active={active} />
         ))}
       </div>
+      {lastUpdated && (
+        <p className="text-center text-slate-500 text-xs mt-6">
+          🔄 {lastUpdated} · Refreshes every morning
+        </p>
+      )}
     </section>
   );
 }
