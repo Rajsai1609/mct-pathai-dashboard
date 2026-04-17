@@ -70,6 +70,26 @@ export async function fetchStudentCount(): Promise<number> {
   return count ?? 0;
 }
 
+export async function fetchJobCount(): Promise<number> {
+  const client = getClient();
+  if (!client) return 0;
+  const { count, error } = await client
+    .from("scraped_jobs")
+    .select("id", { count: "exact", head: true });
+  if (error) return 0;
+  return count ?? 0;
+}
+
+export async function fetchMatchCount(): Promise<number> {
+  const client = getClient();
+  if (!client) return 0;
+  const { count, error } = await client
+    .from("student_job_scores")
+    .select("student_id", { count: "exact", head: true });
+  if (error) return 0;
+  return count ?? 0;
+}
+
 export async function fetchStudents(): Promise<Student[]> {
   const client = getClient();
   if (!client) return [];
