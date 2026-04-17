@@ -9,6 +9,8 @@ import { CtaSection } from "@/components/landing/cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
 import { fetchStudentCount } from "@/lib/supabase";
 
+export const revalidate = 300; // revalidate every 5 minutes
+
 function StudentsSkeleton() {
   return (
     <section className="py-24 container mx-auto px-6">
