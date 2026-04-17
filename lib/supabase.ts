@@ -99,7 +99,13 @@ export async function fetchStudents(): Promise<Student[]> {
     .select("id, name")
     .order("name", { ascending: true });
   if (error) return [];
-  return (data ?? []) as Student[];
+  const seen = new Set<string>();
+  return (data ?? []).filter((s: Student) => {
+    const key = s.name.toLowerCase().trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 export async function fetchStudent(studentId: string): Promise<Student | null> {
