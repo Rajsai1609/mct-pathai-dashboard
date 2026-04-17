@@ -178,15 +178,21 @@ export async function fetchStudentJobs(
   if (!data?.length) return [];
 
   const rows = data as unknown as ScoreWithJob[];
-  const seenUrls = new Set<string>();
+  const seen = new Set<string>();
   const merged: JobMatch[] = [];
 
   for (const row of rows) {
     const job = row.scraped_jobs;
     if (!job) continue;                       // FK row had no match
     if (!isUsaJob(job.location)) continue;    // USA-only filter
-    if (seenUrls.has(job.url)) continue;      // deduplicate by URL
-    seenUrls.add(job.url);
+
+    const urlKey = job.url?.toLowerCase().trim();
+    if (urlKey && seen.has(urlKey)) continue;
+    if (urlKey) seen.add(urlKey);
+
+    const titleKey = `${job.title?.toLowerCase().trim()}-${job.company?.toLowerCase().trim()}`;
+    if (seen.has(titleKey)) continue;
+    seen.add(titleKey);
 
     merged.push({
       ...job,
