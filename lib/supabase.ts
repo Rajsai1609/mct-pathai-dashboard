@@ -66,8 +66,11 @@ export async function fetchStudentCount(): Promise<number> {
   if (!client) return 0;
   const { count, error } = await client
     .from("students")
-    .select("id", { count: "exact", head: true });
-  if (error) return 0;
+    .select("*", { count: "exact", head: true });
+  if (error) {
+    console.error("fetchStudentCount error:", error.message, error.code);
+    return 0;
+  }
   return count ?? 0;
 }
 
@@ -76,8 +79,11 @@ export async function fetchJobCount(): Promise<number> {
   if (!client) return 0;
   const { count, error } = await client
     .from("scraped_jobs")
-    .select("id", { count: "exact", head: true });
-  if (error) return 0;
+    .select("*", { count: "exact", head: true });
+  if (error) {
+    console.error("fetchJobCount error:", error.message, error.code);
+    return 0;
+  }
   return count ?? 0;
 }
 
@@ -86,8 +92,11 @@ export async function fetchMatchCount(): Promise<number> {
   if (!client) return 0;
   const { count, error } = await client
     .from("student_job_scores")
-    .select("student_id", { count: "exact", head: true });
-  if (error) return 0;
+    .select("*", { count: "exact", head: true });
+  if (error) {
+    console.error("fetchMatchCount error:", error.message, error.code);
+    return 0;
+  }
   return count ?? 0;
 }
 
