@@ -17,6 +17,7 @@ function getClient(): SupabaseClient | null {
 export interface WaitlistEntry {
   name: string;
   email: string;
+  phone: string;
   visa_status: string;
   target_role: string;
   resume_url?: string;

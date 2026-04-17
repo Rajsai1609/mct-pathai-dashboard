@@ -26,7 +26,7 @@ interface WaitlistModalProps {
 
 export function WaitlistModal({ onClose }: WaitlistModalProps) {
   const [form, setForm] = useState({
-    name: "", email: "", visa_status: "", target_role: "",
+    name: "", email: "", phone: "", visa_status: "", target_role: "",
   });
   const [file, setFile]         = useState<File | null>(null);
   const [fileErr, setFileErr]   = useState("");
@@ -59,7 +59,7 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.visa_status || !file) return;
+    if (!form.name || !form.email || !form.phone || !form.visa_status || !file) return;
 
     // Phase 1 — upload resume
     setPhase("uploading");
@@ -157,6 +157,21 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
                   placeholder="priya@university.edu"
                   value={form.email}
                   onChange={set("email")}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="text-slate-400 text-xs font-medium mb-1.5 block">
+                  Phone Number <span className="text-violet-400">*</span>
+                </label>
+                <Input
+                  type="tel"
+                  placeholder="+1 206 555 0123"
+                  value={form.phone}
+                  onChange={set("phone")}
                   required
                   disabled={isLoading}
                 />
