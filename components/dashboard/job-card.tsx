@@ -1,45 +1,38 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import { MapPin, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
-import { cn, getLogoGradient, GRADE_BG } from "@/lib/utils";
+import { cn, GRADE_BG } from "@/lib/utils";
 import type { JobMatch } from "@/lib/types";
 
-const COMPANY_DOMAINS: Record<string, string> = {
-  "databricks":  "databricks.com",
-  "openai":      "openai.com",
-  "mongodb":     "mongodb.com",
-  "notion":      "notion.so",
-  "ramp":        "ramp.com",
-  "stripe":      "stripe.com",
-  "datadog":     "datadoghq.com",
+const COMPANY_COLORS: Record<string, string> = {
+  "databricks": "bg-red-500",
+  "openai":     "bg-green-600",
+  "mongodb":    "bg-green-500",
+  "notion":     "bg-gray-800",
+  "ramp":       "bg-yellow-500",
+  "stripe":     "bg-purple-600",
+  "datadog":    "bg-purple-500",
+  "google":     "bg-blue-500",
+  "microsoft":  "bg-blue-600",
+  "amazon":     "bg-orange-500",
+  "meta":       "bg-blue-700",
+  "apple":      "bg-gray-700",
+  "netflix":    "bg-red-600",
+  "default":    "bg-gradient-to-br from-purple-500 to-blue-500",
 };
 
-function CompanyLogo({ company, gradient }: { company: string; gradient: string }) {
-  const [imgError, setImgError] = useState(false);
-  const domain = COMPANY_DOMAINS[company.toLowerCase().trim()];
-
-  const fallback = (
-    <div
-      className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 text-white font-bold text-base shadow-md`}
-    >
-      {company.charAt(0).toUpperCase()}
-    </div>
-  );
-
-  if (!domain || imgError) return fallback;
+function CompanyLogo({ company }: { company: string }) {
+  const initial = company.charAt(0).toUpperCase();
+  const color   = COMPANY_COLORS[company.toLowerCase().trim()] ?? COMPANY_COLORS["default"];
 
   return (
-    <img
-      src={`https://logo.clearbit.com/${domain}`}
-      onError={() => setImgError(true)}
-      alt={company}
-      className="w-11 h-11 rounded-xl object-contain bg-white p-1.5 flex-shrink-0 shadow-md"
-    />
+    <div
+      className={`${color} rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 text-white font-bold text-lg shadow-md`}
+    >
+      {initial}
+    </div>
   );
 }
 
@@ -72,7 +65,7 @@ export function JobCard({ job }: JobCardProps) {
       {/* Header row */}
       <div className="flex items-start gap-3">
         {/* Company logo */}
-        <CompanyLogo company={job.company} gradient={getLogoGradient(job.company)} />
+        <CompanyLogo company={job.company} />
 
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm leading-tight truncate">
