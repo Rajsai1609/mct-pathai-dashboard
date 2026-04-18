@@ -5,7 +5,7 @@ import { Flame, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WaitlistModal } from "./waitlist-modal";
 
-const BETA_LIMIT = 20;
+const BETA_LIMIT = 50;
 
 interface CtaSectionProps {
   studentCount: number;
@@ -19,7 +19,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
 
   const urgencyText = isFull
     ? "Beta is full — join the waitlist"
-    : `🔥 Only ${remaining} spot${remaining === 1 ? "" : "s"} left — first come first served!`;
+    : "🔥 50 spots total — filling fast!";
 
   const urgencyStyle = isFull
     ? "bg-slate-500/20 text-slate-300 border-slate-500/30"
@@ -46,7 +46,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
             <p className="text-slate-400 mb-8 max-w-lg mx-auto">
               {isFull
                 ? "Our beta is currently full. Join the waitlist and we'll notify you as soon as a spot opens up."
-                : "Join the first 20 beta students and get FREE access to AI-powered job matching built specifically for F1, OPT & H1B students."}
+                : "Join the first 50 beta students and get FREE access to AI-powered job matching built specifically for F1, OPT & H1B students."}
             </p>
 
             {/* Slot bar — only shown when there are spots */}
