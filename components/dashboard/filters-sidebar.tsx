@@ -15,6 +15,7 @@ export interface FilterState {
   workMode: string;
   visaOnly: boolean;
   h1bOnly: boolean;
+  verifiedH1BOnly: boolean;
 }
 
 interface FiltersSidebarProps {
@@ -44,6 +45,7 @@ export function FiltersSidebar({
       workMode: "all",
       visaOnly: false,
       h1bOnly: false,
+      verifiedH1BOnly: false,
     });
 
   return (
@@ -176,6 +178,27 @@ export function FiltersSidebar({
             </div>
             <span className="text-slate-300 text-sm group-hover:text-white transition-colors">
               Hide Visa-Flagged
+            </span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer group">
+            <div
+              onClick={() => onChange({ ...filters, verifiedH1BOnly: !filters.verifiedH1BOnly })}
+              className={cn(
+                "w-8 h-4 rounded-full border transition-all relative",
+                filters.verifiedH1BOnly
+                  ? "bg-green-600 border-green-500"
+                  : "bg-white/10 border-white/20",
+              )}
+            >
+              <span
+                className={cn(
+                  "absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all",
+                  filters.verifiedH1BOnly ? "left-4" : "left-0.5",
+                )}
+              />
+            </div>
+            <span className="text-slate-300 text-sm group-hover:text-white transition-colors">
+              🟢 Verified H1B Sponsors Only
             </span>
           </label>
         </div>

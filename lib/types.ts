@@ -19,6 +19,8 @@ export interface ScrapedJob {
   opt_friendly: boolean | null;
   is_entry_eligible: boolean;
   date_posted?: string | null;
+  visa_score?: number | null;
+  h1b_count?: number | null;
 }
 
 export interface StudentJobScore {

@@ -23,6 +23,26 @@ const COMPANY_COLORS: Record<string, string> = {
   "default":    "bg-gradient-to-br from-purple-500 to-blue-500",
 };
 
+function H1BBadge({ visa_score, h1b_count }: { visa_score?: number | null; h1b_count?: number | null }) {
+  if (visa_score == null) return null;
+  if (visa_score >= 70) return (
+    <div className="flex items-center gap-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full px-2 py-0.5 text-xs font-medium">
+      🟢 Verified H1B Sponsor
+      {(h1b_count ?? 0) > 0 && <span className="opacity-70">· {h1b_count} filings</span>}
+    </div>
+  );
+  if (visa_score >= 30) return (
+    <div className="flex items-center gap-1 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-full px-2 py-0.5 text-xs font-medium">
+      🟡 Rarely Sponsors H1B
+    </div>
+  );
+  return (
+    <div className="flex items-center gap-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full px-2 py-0.5 text-xs font-medium">
+      🔴 No H1B History
+    </div>
+  );
+}
+
 function CompanyLogo({ company }: { company: string }) {
   const initial = company.charAt(0).toUpperCase();
   const color   = COMPANY_COLORS[company.toLowerCase().trim()] ?? COMPANY_COLORS["default"];
@@ -82,6 +102,14 @@ export function JobCard({ job }: JobCardProps) {
             {job.title}
           </p>
           <p className="text-slate-400 text-xs mt-0.5 truncate">{job.company}</p>
+          {job.visa_score != null
+            ? <H1BBadge visa_score={job.visa_score} h1b_count={job.h1b_count} />
+            : job.h1b_sponsor === true && (
+              <div className="flex items-center gap-1 bg-violet-500/20 text-violet-300 border border-violet-500/30 rounded-full px-2 py-0.5 text-xs font-medium mt-0.5">
+                <CheckCircle2 className="w-3 h-3" /> H1B Sponsor
+              </div>
+            )
+          }
         </div>
 
         {/* Score ring */}
@@ -127,11 +155,6 @@ export function JobCard({ job }: JobCardProps) {
           </Badge>
         )}
 
-        {job.h1b_sponsor === true && (
-          <Badge className="text-[10px] py-0 px-2 bg-violet-500/15 text-violet-300 border-violet-500/25 gap-1">
-            <CheckCircle2 className="w-3 h-3" /> H1B
-          </Badge>
-        )}
         {job.opt_friendly === true && (
           <Badge className="text-[10px] py-0 px-2 bg-blue-500/15 text-blue-300 border-blue-500/25 gap-1">
             <CheckCircle2 className="w-3 h-3" /> OPT

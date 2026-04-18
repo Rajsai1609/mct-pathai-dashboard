@@ -175,7 +175,8 @@ export async function fetchStudentJobs(
     .select(
       "fit_score, skill_score, semantic_score, " +
       "scraped_jobs(id, title, company, url, location, work_mode, " +
-      "job_category, h1b_sponsor, opt_friendly, is_entry_eligible, date_posted)",
+      "job_category, h1b_sponsor, opt_friendly, is_entry_eligible, date_posted, " +
+      "visa_score, h1b_count)",
     )
     .eq("student_id", studentId)
     .gte("fit_score", minScore)

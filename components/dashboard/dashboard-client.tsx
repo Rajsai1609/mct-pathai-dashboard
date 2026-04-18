@@ -17,6 +17,7 @@ const DEFAULT_FILTERS: FilterState = {
   workMode: "all",
   visaOnly: false,
   h1bOnly: false,
+  verifiedH1BOnly: false,
 };
 
 export function DashboardClient({ jobs, studentName }: DashboardClientProps) {
@@ -36,6 +37,7 @@ export function DashboardClient({ jobs, studentName }: DashboardClientProps) {
       if (filters.workMode !== "all" && job.work_mode !== filters.workMode) return false;
       if (filters.visaOnly && job.visa_flag) return false;
       if (filters.h1bOnly && job.h1b_sponsor !== true) return false;
+      if (filters.verifiedH1BOnly && (job.visa_score ?? 0) < 70) return false;
       return true;
     });
   }, [jobs, filters]);
