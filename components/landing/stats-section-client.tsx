@@ -55,7 +55,7 @@ function StatCard({ stat, active }: { stat: Stat; active: boolean }) {
 
   return (
     <div
-      className="glass rounded-2xl p-8 text-center relative overflow-hidden flex flex-col items-center"
+      className="glass rounded-2xl p-6 text-center relative overflow-hidden flex flex-col items-center min-w-0"
       style={{
         border: "1px solid rgba(255,255,255,0.08)",
         boxShadow: active ? `0 0 40px ${stat.glow}, 0 0 80px ${stat.glow.replace("0.35", "0.12")}` : "none",
@@ -72,19 +72,10 @@ function StatCard({ stat, active }: { stat: Stat; active: boolean }) {
 
       {/* Number */}
       <span
-        className="relative text-6xl md:text-7xl font-black tabular-nums tracking-tight"
-        style={{
-          background: `linear-gradient(135deg, var(--tw-gradient-stops))`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        }}
+        className={`relative font-black tabular-nums tracking-tight bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent w-full block`}
+        style={{ fontSize: "clamp(1.6rem, 4vw, 3.5rem)", lineHeight: 1.1 }}
       >
-        <span
-          className={`bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}
-        >
-          {display}{stat.suffix}
-        </span>
+        {display}{stat.suffix}
       </span>
 
       {/* Label */}
