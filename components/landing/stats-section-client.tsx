@@ -8,6 +8,13 @@ interface Stat {
   label: string;
   gradient: string;
   glow: string;
+  compact?: boolean;
+}
+
+function formatNumber(num: number): string {
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
+  if (num >= 1_000)     return (num / 1_000).toFixed(1) + "K";
+  return num.toString();
 }
 
 interface StatsSectionClientProps {
@@ -50,8 +57,8 @@ function getLastUpdatedLabel(): string {
 }
 
 function StatCard({ stat, active }: { stat: Stat; active: boolean }) {
-  const count = useCountUp(stat.target, 1600, active);
-  const display = count.toLocaleString();
+  const count   = useCountUp(stat.target, 1600, active);
+  const display = stat.compact ? formatNumber(count) : count.toLocaleString();
 
   return (
     <div
@@ -72,8 +79,7 @@ function StatCard({ stat, active }: { stat: Stat; active: boolean }) {
 
       {/* Number */}
       <span
-        className={`relative font-black tabular-nums tracking-tight bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent w-full block`}
-        style={{ fontSize: "clamp(1.6rem, 4vw, 3.5rem)", lineHeight: 1.1 }}
+        className={`relative text-4xl md:text-5xl font-black tabular-nums tracking-tight bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}
       >
         {display}{stat.suffix}
       </span>
@@ -117,6 +123,7 @@ export function StatsSectionClient({
       label: "Active Jobs Indexed",
       gradient: "from-violet-400 to-purple-400",
       glow: "rgba(139,92,246,0.35)",
+      compact: true,
     },
     {
       target: matchCount,
@@ -124,6 +131,7 @@ export function StatsSectionClient({
       label: "AI Matches Scored",
       gradient: "from-blue-400 to-cyan-400",
       glow: "rgba(59,130,246,0.35)",
+      compact: true,
     },
     {
       target: 70,
