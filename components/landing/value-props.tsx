@@ -41,6 +41,13 @@ const FEATURES = [
     border: "border-cyan-500/20",
     bg: "bg-cyan-500/5",
   },
+  {
+    icon: "🟢",
+    title: "Fresh Jobs Every Morning",
+    desc: "Our AI pipeline runs at 7AM daily. Every job shows exactly how fresh it is. No stale listings. No wasted applications.",
+    border: "border-green-500/20",
+    bg: "bg-green-500/5",
+  },
 ];
 
 export function ValueProps() {

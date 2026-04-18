@@ -7,6 +7,7 @@ import { StatsSection } from "@/components/landing/stats-section";
 import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
+import { FreshnessSection } from "@/components/landing/freshness-section";
 import { fetchJobCount, fetchStudentCount } from "@/lib/supabase";
 
 export const revalidate = 300; // revalidate every 5 minutes
@@ -62,12 +63,15 @@ export default async function HomePage() {
         {/* 6 — Built only for international students */}
         <ValueProps />
 
-        {/* 7 — Live student dashboards */}
+        {/* 7 — How fresh are our jobs */}
+        <FreshnessSection />
+
+        {/* 8 — Live student dashboards */}
         <Suspense fallback={<StudentsSkeleton />}>
           <StudentsSection />
         </Suspense>
 
-        {/* 8 — Urgency CTA */}
+        {/* 9 — Urgency CTA */}
         <CtaSection studentCount={studentCount} />
 
         {/* 9 — Contact */}

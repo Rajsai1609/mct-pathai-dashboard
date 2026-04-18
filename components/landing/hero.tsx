@@ -37,8 +37,8 @@ export function Hero({ jobCount = 0 }: HeroProps) {
         <div className="relative z-10 container mx-auto px-6 text-center max-w-4xl">
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-sm text-violet-300 mb-8 animate-fade-in">
-            <Sparkles className="w-4 h-4" />
-            <span>AI-Powered · F1 &amp; OPT Friendly · {jobBadge}</span>
+            <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_6px_2px_rgba(74,222,128,0.5)]" />
+            <span>Live — Updated Today at 7AM · F1 &amp; OPT Friendly · {jobBadge}</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-fade-in">
