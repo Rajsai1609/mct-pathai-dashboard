@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Grade } from "@/lib/types";
 
-const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+", "C", "D", "F"];
+const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+"];
 const WORK_MODES = ["all", "remote", "hybrid", "onsite"] as const;
 
 export interface FilterState {
