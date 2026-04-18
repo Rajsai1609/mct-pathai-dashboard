@@ -4,6 +4,7 @@ const ROWS = [
   "Built for OPT / H1B",
   "AI resume matching",
   "Visa sponsorship filter",
+  "DOL Verified H1B Data",
   "Daily auto-scoring",
   "Free for students",
 ];

@@ -42,6 +42,13 @@ const FEATURES = [
     bg: "bg-cyan-500/5",
   },
   {
+    icon: "🛡️",
+    title: "DOL-Verified H1B Sponsors",
+    desc: "Every job is cross-referenced with 24,329 verified H1B employers from the US Department of Labor. Know before you apply — no surprises, no wasted interviews.",
+    border: "border-green-500/20",
+    bg: "bg-green-500/5",
+  },
+  {
     icon: "🟢",
     title: "Fresh Jobs Every Morning",
     desc: "Our AI pipeline runs at 7AM daily. Every job shows exactly how fresh it is. No stale listings. No wasted applications.",

@@ -57,6 +57,24 @@ export function DashboardClient({ jobs, studentName }: DashboardClientProps) {
       {/* Stats */}
       <StatsCards stats={stats} />
 
+      {/* H1B verification info banner */}
+      <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-xl p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <span>🟢</span>
+          <h3 className="text-white font-semibold">How We Verify H1B Sponsors</h3>
+        </div>
+        <p className="text-gray-400 text-sm">
+          Every job listing is cross-referenced with{" "}
+          <strong className="text-white">24,329 verified H1B employers</strong>{" "}
+          from the US Department of Labor database. No guessing. No assumptions. Real government data.
+        </p>
+        <div className="flex flex-wrap gap-4 mt-3 text-xs">
+          <span className="text-green-400">🟢 Verified — Filed H1Bs with DOL</span>
+          <span className="text-yellow-400">🟡 Rarely — Limited H1B history</span>
+          <span className="text-red-400">🔴 None — No H1B filings found</span>
+        </div>
+      </div>
+
       {/* Main layout */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Filters */}
