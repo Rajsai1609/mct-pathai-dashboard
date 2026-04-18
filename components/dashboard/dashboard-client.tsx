@@ -40,11 +40,15 @@ export function DashboardClient({ jobs, studentName }: DashboardClientProps) {
     });
   }, [jobs, filters]);
 
-  const stats = useMemo(() => ({
-    totalMatched: jobs.length,
-    topScore: jobs.length > 0 ? jobs[0].fit_pct : 0,
-    topGradeCount: jobs.filter((j) => j.grade === "A+" || j.grade === "A").length,
-  }), [jobs]);
+  const stats = useMemo(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return {
+      totalMatched: jobs.length,
+      topScore: jobs.length > 0 ? jobs[0].fit_pct : 0,
+      topGradeCount: jobs.filter((j) => j.grade === "A+" || j.grade === "A").length,
+      newJobsToday: jobs.filter((j) => j.date_posted?.startsWith(today)).length,
+    };
+  }, [jobs]);
 
   return (
     <div className="space-y-8">

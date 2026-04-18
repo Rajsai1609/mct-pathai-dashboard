@@ -55,10 +55,20 @@ function getSource(id: string): [string, string] {
   return ["Other", "bg-slate-500/15 text-slate-400 border-slate-500/25"];
 }
 
+function getFreshnessBadge(datePosted: string | null | undefined): { label: string; cls: string } | null {
+  if (!datePosted) return null;
+  const diffDays = Math.floor((Date.now() - new Date(datePosted).getTime()) / 86_400_000);
+  if (diffDays === 0) return { label: "New Today", cls: "bg-green-500/15 text-green-400 border-green-500/25" };
+  if (diffDays === 1) return { label: "Yesterday", cls: "bg-blue-500/15 text-blue-400 border-blue-500/25" };
+  if (diffDays <= 7) return { label: `${diffDays}d ago`, cls: "bg-slate-500/15 text-slate-400 border-slate-500/25" };
+  return null;
+}
+
 export function JobCard({ job }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const [sourceLabel, sourceCls] = getSource(job.id);
+  const freshness = getFreshnessBadge(job.date_posted);
 
   return (
     <div className="glass glass-hover rounded-2xl p-5 flex flex-col gap-4">
@@ -96,7 +106,7 @@ export function JobCard({ job }: JobCardProps) {
         )}
       </div>
 
-      {/* Grade badge + source + visa badges */}
+      {/* Grade badge + source + freshness + visa badges */}
       <div className="flex items-center gap-2 flex-wrap">
         <span
           className={cn(
@@ -110,6 +120,12 @@ export function JobCard({ job }: JobCardProps) {
         <Badge className={cn("text-[10px] py-0 px-2", sourceCls)}>
           {sourceLabel}
         </Badge>
+
+        {freshness && (
+          <Badge className={cn("text-[10px] py-0 px-2", freshness.cls)}>
+            {freshness.label}
+          </Badge>
+        )}
 
         {job.h1b_sponsor === true && (
           <Badge className="text-[10px] py-0 px-2 bg-violet-500/15 text-violet-300 border-violet-500/25 gap-1">

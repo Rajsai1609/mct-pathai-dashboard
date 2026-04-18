@@ -18,6 +18,7 @@ export interface ScrapedJob {
   h1b_sponsor: boolean | null;
   opt_friendly: boolean | null;
   is_entry_eligible: boolean;
+  date_posted?: string | null;
 }
 
 export interface StudentJobScore {
@@ -39,4 +40,5 @@ export interface DashboardStats {
   totalMatched: number;
   topScore: number;
   topGradeCount: number;
+  newJobsToday: number;
 }

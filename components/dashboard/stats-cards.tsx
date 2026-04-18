@@ -1,4 +1,4 @@
-import { Briefcase, TrendingUp, Star } from "lucide-react";
+import { Briefcase, TrendingUp, Star, Sparkles } from "lucide-react";
 import type { DashboardStats } from "@/lib/types";
 
 interface StatsCardsProps {
@@ -31,10 +31,18 @@ export function StatsCards({ stats }: StatsCardsProps) {
       color: "text-emerald-400",
       bg: "bg-emerald-500/10 border-emerald-500/20",
     },
+    {
+      icon: Sparkles,
+      label: "New Today",
+      value: stats.newJobsToday.toLocaleString(),
+      sub: "posted today",
+      color: "text-green-400",
+      bg: "bg-green-500/10 border-green-500/20",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((c, i) => (
         <div key={i} className={`glass rounded-2xl p-5 border ${c.bg}`}>
           <div className="flex items-center gap-3 mb-3">

@@ -168,12 +168,14 @@ export async function fetchStudentJobs(
 
   // Single query — PostgREST resolves the FK join automatically.
   // student_job_scores.job_id → scraped_jobs.id
+  const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+
   const { data, error } = await client
     .from("student_job_scores")
     .select(
       "fit_score, skill_score, semantic_score, " +
       "scraped_jobs(id, title, company, url, location, work_mode, " +
-      "job_category, h1b_sponsor, opt_friendly, is_entry_eligible)",
+      "job_category, h1b_sponsor, opt_friendly, is_entry_eligible, date_posted)",
     )
     .eq("student_id", studentId)
     .gte("fit_score", minScore)
@@ -194,6 +196,7 @@ export async function fetchStudentJobs(
     const job = row.scraped_jobs;
     if (!job) continue;                       // FK row had no match
     if (!isUsaJob(job.location)) continue;    // USA-only filter
+    if (job.date_posted && job.date_posted < fourteenDaysAgo) continue; // 14-day freshness filter
 
     const urlKey = job.url?.toLowerCase().trim();
     if (urlKey && seen.has(urlKey)) continue;
