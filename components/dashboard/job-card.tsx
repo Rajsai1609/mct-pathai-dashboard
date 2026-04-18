@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { MapPin, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -5,6 +8,40 @@ import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
 import { cn, getLogoGradient, GRADE_BG } from "@/lib/utils";
 import type { JobMatch } from "@/lib/types";
+
+const COMPANY_DOMAINS: Record<string, string> = {
+  "databricks":  "databricks.com",
+  "openai":      "openai.com",
+  "mongodb":     "mongodb.com",
+  "notion":      "notion.so",
+  "ramp":        "ramp.com",
+  "stripe":      "stripe.com",
+  "datadog":     "datadoghq.com",
+};
+
+function CompanyLogo({ company, gradient }: { company: string; gradient: string }) {
+  const [imgError, setImgError] = useState(false);
+  const domain = COMPANY_DOMAINS[company.toLowerCase().trim()];
+
+  const fallback = (
+    <div
+      className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 text-white font-bold text-base shadow-md`}
+    >
+      {company.charAt(0).toUpperCase()}
+    </div>
+  );
+
+  if (!domain || imgError) return fallback;
+
+  return (
+    <img
+      src={`https://logo.clearbit.com/${domain}`}
+      onError={() => setImgError(true)}
+      alt={company}
+      className="w-11 h-11 rounded-xl object-contain bg-white p-1.5 flex-shrink-0 shadow-md"
+    />
+  );
+}
 
 interface JobCardProps {
   job: JobMatch;
@@ -34,12 +71,8 @@ export function JobCard({ job }: JobCardProps) {
     <div className="glass glass-hover rounded-2xl p-5 flex flex-col gap-4">
       {/* Header row */}
       <div className="flex items-start gap-3">
-        {/* Company logo initial */}
-        <div
-          className={`w-11 h-11 rounded-xl bg-gradient-to-br ${getLogoGradient(job.company)} flex items-center justify-center flex-shrink-0 text-white font-bold text-base shadow-md`}
-        >
-          {job.company.charAt(0).toUpperCase()}
-        </div>
+        {/* Company logo */}
+        <CompanyLogo company={job.company} gradient={getLogoGradient(job.company)} />
 
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm leading-tight truncate">
