@@ -97,6 +97,7 @@ export default async function DashboardPage({ params }: PageProps) {
             jobs={jobs}
             studentName={student.name}
             studentId={student_id}
+            studentUniversity={student.university}
             roleTracks={activeTracks}
             initialApplications={initialApplications}
           />

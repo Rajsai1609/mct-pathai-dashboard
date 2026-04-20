@@ -28,7 +28,7 @@ interface WaitlistModalProps {
 
 export function WaitlistModal({ onClose }: WaitlistModalProps) {
   const [form, setForm] = useState({
-    name: "", email: "", phone: "", visa_status: "", target_role: "",
+    name: "", email: "", phone: "", visa_status: "", university: "", target_role: "",
   });
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [file, setFile]         = useState<File | null>(null);
@@ -79,6 +79,7 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
     setPhase("saving");
     const result = await submitWaitlist({
       ...form,
+      university: form.university || undefined,
       role_track: selectedTracks[0] ?? "",
       role_tracks: selectedTracks,
       resume_url,
@@ -202,6 +203,19 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
                     <option key={o.value} value={o.value} className="bg-slate-900">{o.label}</option>
                   ))}
                 </select>
+              </div>
+
+              {/* University */}
+              <div>
+                <label className="text-slate-400 text-xs font-medium mb-1.5 block">
+                  University
+                </label>
+                <Input
+                  placeholder="e.g. University of Washington"
+                  value={form.university}
+                  onChange={set("university")}
+                  disabled={isLoading}
+                />
               </div>
 
               {/* Role tracks — pill grid, max 3 */}

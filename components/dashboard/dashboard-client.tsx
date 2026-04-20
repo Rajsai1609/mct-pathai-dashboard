@@ -13,6 +13,7 @@ interface DashboardClientProps {
   jobs: JobMatch[];
   studentName: string;
   studentId: string;
+  studentUniversity?: string;
   roleTracks: string[];
   initialApplications: JobApplication[];
 }
@@ -32,6 +33,7 @@ export function DashboardClient({
   jobs,
   studentName,
   studentId,
+  studentUniversity,
   roleTracks,
   initialApplications,
 }: DashboardClientProps) {
@@ -193,6 +195,8 @@ export function DashboardClient({
                   onStatusChange={handleStatusChange}
                   statusDropdown
                   roleTracks={currentTracks}
+                  studentName={studentName}
+                  studentUniversity={studentUniversity}
                 />
               ))}
             </div>
@@ -230,6 +234,8 @@ export function DashboardClient({
                     status={applications.get(job.id) ?? null}
                     onStatusChange={handleStatusChange}
                     roleTracks={currentTracks}
+                    studentName={studentName}
+                    studentUniversity={studentUniversity}
                   />
                 ))}
               </div>

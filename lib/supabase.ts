@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { JobMatch, ScrapedJob, Student, JobApplication, ApplicationStatus } from "./types";
+import type { JobMatch, ScrapedJob, Student, JobApplication, ApplicationStatus, Alumni } from "./types";
 import { scoreToGrade } from "./utils";
 
 // Lazy singleton — only instantiated at runtime, never at build time.
@@ -19,6 +19,7 @@ export interface WaitlistEntry {
   email: string;
   phone: string;
   visa_status: string;
+  university?: string;
   target_role: string;
   role_track?: string;
   role_tracks?: string[];
@@ -341,6 +342,33 @@ export async function updateJobStatus(
     return false;
   }
   return true;
+}
+
+export async function fetchAlumniAtCompany(
+  company: string,
+  studentUniversity?: string,
+): Promise<Alumni[]> {
+  const client = getClient();
+  if (!client) return [];
+
+  let query = client
+    .from("alumni")
+    .select("id, full_name, linkedin_url, current_company, current_title, university, graduation_year, major, visa_status, location, willing_to_refer, added_at")
+    .ilike("current_company", company)
+    .order("willing_to_refer", { ascending: false })
+    .order("graduation_year", { ascending: false })
+    .limit(20);
+
+  if (studentUniversity) {
+    query = query.ilike("university", `%${studentUniversity}%`);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("fetchAlumniAtCompany:", error.message);
+    return [];
+  }
+  return (data ?? []) as Alumni[];
 }
 
 export async function fetchSavedJobs(studentId: string): Promise<JobApplication[]> {

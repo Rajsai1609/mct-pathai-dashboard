@@ -4,6 +4,23 @@ export interface Student {
   email?: string;
   role_track?: string;
   role_tracks?: string[];
+  university?: string;
+}
+
+export interface Alumni {
+  id: string;
+  full_name: string;
+  linkedin_url?: string | null;
+  current_company: string;
+  current_title?: string | null;
+  university: string;
+  graduation_year?: number | null;
+  major?: string | null;
+  visa_status?: string | null;
+  location?: string | null;
+  willing_to_refer: boolean;
+  email?: string | null;
+  added_at?: string;
 }
 
 export interface ScrapedJob {

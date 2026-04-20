@@ -1,13 +1,16 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { MapPin, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
+import { MapPin, ExternalLink, CheckCircle2, XCircle, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
+import { AlumniModal } from "./alumni-modal";
 import { cn, GRADE_BG } from "@/lib/utils";
-import type { JobMatch, ApplicationStatus } from "@/lib/types";
+import type { JobMatch, ApplicationStatus, Alumni } from "@/lib/types";
 import { getMatchedTrack } from "@/lib/role-tracks";
+import { fetchAlumniAtCompany } from "@/lib/supabase";
 
 const COMPANY_COLORS: Record<string, string> = {
   "databricks": "bg-red-500",
@@ -82,9 +85,11 @@ interface JobCardProps {
   onStatusChange?: (jobId: string, status: ApplicationStatus | null) => void;
   statusDropdown?: boolean;
   roleTracks?: string[];
+  studentName?: string;
+  studentUniversity?: string;
 }
 
-export function JobCard({ job, status, onStatusChange, statusDropdown, roleTracks }: JobCardProps) {
+export function JobCard({ job, status, onStatusChange, statusDropdown, roleTracks, studentName, studentUniversity }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const freshness = getFreshnessBadge(job.date_posted);
@@ -92,6 +97,19 @@ export function JobCard({ job, status, onStatusChange, statusDropdown, roleTrack
   const matchedTrack = roleTracks && roleTracks.length > 1
     ? getMatchedTrack(`${job.title} ${job.job_category ?? ""}`, roleTracks)
     : null;
+
+  const [alumni, setAlumni] = useState<Alumni[] | null>(null);
+  const [alumniOpen, setAlumniOpen] = useState(false);
+  const fetchedRef = useRef(false);
+
+  const handleAlumniClick = async () => {
+    if (!fetchedRef.current) {
+      fetchedRef.current = true;
+      const data = await fetchAlumniAtCompany(job.company, studentUniversity);
+      setAlumni(data);
+    }
+    setAlumniOpen(true);
+  };
 
   return (
     <div className="glass glass-hover rounded-2xl p-4 flex flex-col gap-3">
@@ -168,6 +186,31 @@ export function JobCard({ job, status, onStatusChange, statusDropdown, roleTrack
         <div className="text-xs text-purple-400 flex items-center gap-1">
           Matched via: {matchedTrack.icon} {matchedTrack.label}
         </div>
+      )}
+
+      {/* Alumni badge */}
+      <button
+        type="button"
+        onClick={handleAlumniClick}
+        className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition-colors w-fit"
+      >
+        <Users className="w-3 h-3" />
+        {alumni === null
+          ? "👥 See alumni here"
+          : alumni.length === 0
+            ? "No alumni yet"
+            : `👥 ${alumni.length} alumni here`
+        }
+      </button>
+
+      {/* Alumni modal */}
+      {alumniOpen && alumni !== null && (
+        <AlumniModal
+          alumni={alumni}
+          company={job.company}
+          studentName={studentName ?? "You"}
+          onClose={() => setAlumniOpen(false)}
+        />
       )}
 
       {/* Line 5: Status pills or dropdown */}
