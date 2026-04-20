@@ -1,10 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
 import { cn, GRADE_BG } from "@/lib/utils";
-import type { JobMatch } from "@/lib/types";
+import type { JobMatch, ApplicationStatus } from "@/lib/types";
 
 const COMPANY_COLORS: Record<string, string> = {
   "databricks": "bg-red-500",
@@ -65,11 +67,21 @@ function getFreshnessBadge(datePosted: string | null | undefined): { label: stri
   return null;
 }
 
+const STATUS_OPTIONS: { value: ApplicationStatus; label: string; activeClass: string }[] = [
+  { value: "saved",     label: "Saved",     activeClass: "bg-slate-600 border-slate-500 text-white" },
+  { value: "applied",   label: "Applied",   activeClass: "bg-violet-600 border-violet-500 text-white" },
+  { value: "interview", label: "Interview", activeClass: "bg-amber-600 border-amber-500 text-white" },
+  { value: "offer",     label: "Offer",     activeClass: "bg-green-600 border-green-500 text-white" },
+  { value: "rejected",  label: "Rejected",  activeClass: "bg-red-700 border-red-600 text-white" },
+];
+
 interface JobCardProps {
   job: JobMatch;
+  status?: ApplicationStatus | null;
+  onStatusChange?: (jobId: string, status: ApplicationStatus | null) => void;
 }
 
-export function JobCard({ job }: JobCardProps) {
+export function JobCard({ job, status, onStatusChange }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const freshness = getFreshnessBadge(job.date_posted);
@@ -144,7 +156,28 @@ export function JobCard({ job }: JobCardProps) {
         )}
       </div>
 
-      {/* Line 5: Apply button */}
+      {/* Line 5: Track status pills */}
+      {onStatusChange && (
+        <div className="flex gap-1 flex-wrap">
+          {STATUS_OPTIONS.map((s) => (
+            <button
+              key={s.value}
+              type="button"
+              onClick={() => onStatusChange(job.id, status === s.value ? null : s.value)}
+              className={cn(
+                "px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all",
+                status === s.value
+                  ? s.activeClass
+                  : "bg-white/5 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-300",
+              )}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Line 6: Apply button */}
       <Button variant="outline" size="sm" className="w-full mt-auto" asChild>
         <Link href={job.url} target="_blank" rel="noopener noreferrer">
           Apply Now <ExternalLink className="w-3.5 h-3.5" />

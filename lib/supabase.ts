@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { JobMatch, ScrapedJob, Student } from "./types";
+import type { JobMatch, ScrapedJob, Student, JobApplication, ApplicationStatus } from "./types";
 import { scoreToGrade } from "./utils";
 
 // Lazy singleton — only instantiated at runtime, never at build time.
@@ -256,4 +256,62 @@ export async function fetchStudentJobs(
   }
 
   return merged;
+}
+
+export async function fetchApplications(studentId: string): Promise<JobApplication[]> {
+  const client = getClient();
+  if (!client) return [];
+  const { data, error } = await client
+    .from("job_applications")
+    .select("id, student_id, job_id, status, applied_at, updated_at")
+    .eq("student_id", studentId);
+  if (error) {
+    console.error("fetchApplications:", error.message);
+    return [];
+  }
+  return (data ?? []) as JobApplication[];
+}
+
+export async function upsertApplication(
+  studentId: string,
+  jobId: string,
+  status: ApplicationStatus,
+): Promise<boolean> {
+  const client = getClient();
+  if (!client) return false;
+  const payload: Record<string, unknown> = {
+    student_id: studentId,
+    job_id: jobId,
+    status,
+    updated_at: new Date().toISOString(),
+  };
+  if (status === "applied") {
+    payload.applied_at = new Date().toISOString();
+  }
+  const { error } = await client
+    .from("job_applications")
+    .upsert(payload, { onConflict: "student_id,job_id" });
+  if (error) {
+    console.error("upsertApplication:", error.message);
+    return false;
+  }
+  return true;
+}
+
+export async function removeApplication(
+  studentId: string,
+  jobId: string,
+): Promise<boolean> {
+  const client = getClient();
+  if (!client) return false;
+  const { error } = await client
+    .from("job_applications")
+    .delete()
+    .eq("student_id", studentId)
+    .eq("job_id", jobId);
+  if (error) {
+    console.error("removeApplication:", error.message);
+    return false;
+  }
+  return true;
 }

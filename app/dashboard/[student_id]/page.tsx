@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, User } from "lucide-react";
-import { fetchStudent, fetchStudentJobs } from "@/lib/supabase";
+import { fetchStudent, fetchStudentJobs, fetchApplications } from "@/lib/supabase";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { getLogoGradient } from "@/lib/utils";
 import { getTrackMeta, getTracksDisplay } from "@/lib/role-tracks";
@@ -24,9 +24,10 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function DashboardPage({ params }: PageProps) {
   const { student_id } = await params;
 
-  const [student, jobs] = await Promise.all([
+  const [student, jobs, initialApplications] = await Promise.all([
     fetchStudent(student_id),
     fetchStudentJobs(student_id),
+    fetchApplications(student_id),
   ]);
 
   if (!student) notFound();
@@ -97,6 +98,7 @@ export default async function DashboardPage({ params }: PageProps) {
             studentName={student.name}
             studentId={student_id}
             roleTracks={activeTracks}
+            initialApplications={initialApplications}
           />
         )}
       </div>

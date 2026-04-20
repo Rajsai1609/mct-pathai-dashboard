@@ -40,6 +40,19 @@ export interface JobMatch extends ScrapedJob {
 
 export type Grade = "A+" | "A" | "B+" | "B" | "C+" | "C" | "D" | "F";
 
+export type ApplicationStatus = "saved" | "applied" | "interview" | "offer" | "rejected";
+
+export interface JobApplication {
+  id?: string;
+  student_id: string;
+  job_id: string;
+  status: ApplicationStatus;
+  notes?: string | null;
+  applied_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface DashboardStats {
   totalMatched: number;
   topScore: number;
