@@ -28,7 +28,7 @@ const DEFAULT_FILTERS: FilterState = {
   verifiedH1BOnly: false,
 };
 
-type Tab = "jobs" | "saved" | "board" | "alumni";
+type Tab = "jobs" | "h1b_verified" | "rarely_sponsors" | "saved" | "board" | "alumni";
 
 export function DashboardClient({
   jobs,
@@ -81,8 +81,24 @@ export function DashboardClient({
     }
   };
 
+  const verifiedH1BCount = useMemo(
+    () => jobs.filter((j) => (j.visa_score ?? 0) >= 70).length,
+    [jobs],
+  );
+  const rarelySponsorCount = useMemo(
+    () => jobs.filter((j) => { const s = j.visa_score ?? 0; return s >= 30 && s < 70; }).length,
+    [jobs],
+  );
+
   const filtered = useMemo(() => {
     return jobs.filter((job) => {
+      // Tab-level H1B pre-filter
+      if (activeTab === "h1b_verified" && (job.visa_score ?? 0) < 70) return false;
+      if (activeTab === "rarely_sponsors") {
+        const s = job.visa_score ?? 0;
+        if (s < 30 || s >= 70) return false;
+      }
+      // Sidebar filters
       if (filters.grades.size > 0 && !filters.grades.has(job.grade)) return false;
       if (filters.search) {
         const q = filters.search.toLowerCase();
@@ -98,7 +114,7 @@ export function DashboardClient({
       if (filters.verifiedH1BOnly && (job.visa_score ?? 0) < 70) return false;
       return true;
     });
-  }, [jobs, filters]);
+  }, [jobs, filters, activeTab]);
 
   const stats = useMemo(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -130,7 +146,7 @@ export function DashboardClient({
       <StatsCards stats={stats} />
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 border-b border-white/10 pb-0">
+      <div className="flex items-center gap-1 border-b border-white/10 pb-0 flex-wrap">
         <button
           onClick={() => handleTabChange("jobs")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
@@ -141,6 +157,28 @@ export function DashboardClient({
         >
           All Jobs
           <span className="ml-2 text-xs text-slate-500">{jobs.length}</span>
+        </button>
+        <button
+          onClick={() => handleTabChange("h1b_verified")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === "h1b_verified"
+              ? "border-green-500 text-white"
+              : "border-transparent text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          🟢 Verified H1B
+          <span className="ml-2 text-xs text-slate-500">{verifiedH1BCount}</span>
+        </button>
+        <button
+          onClick={() => handleTabChange("rarely_sponsors")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === "rarely_sponsors"
+              ? "border-yellow-500 text-white"
+              : "border-transparent text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          🟡 Rarely Sponsors
+          <span className="ml-2 text-xs text-slate-500">{rarelySponsorCount}</span>
         </button>
         <button
           onClick={() => handleTabChange("saved")}
@@ -189,6 +227,12 @@ export function DashboardClient({
 
       {activeTab === "alumni" ? (
         <AlumniTab alumni={alumni} studentName={studentName} />
+      ) : activeTab === "board" ? (
+        <ApplicationsBoard
+          jobs={jobs}
+          applications={applications}
+          onStatusChange={handleStatusChange}
+        />
       ) : activeTab === "saved" ? (
         <div className="space-y-6">
           {/* Pipeline stats */}
@@ -228,19 +272,17 @@ export function DashboardClient({
             </div>
           )}
         </div>
-      ) : activeTab === "board" ? (
-        <ApplicationsBoard
-          jobs={jobs}
-          applications={applications}
-          onStatusChange={handleStatusChange}
-        />
       ) : (
         <div className="flex flex-col lg:flex-row gap-6">
           <FiltersSidebar
             filters={filters}
             onChange={setFilters}
             totalShowing={filtered.length}
-            totalAll={jobs.length}
+            totalAll={
+              activeTab === "h1b_verified" ? verifiedH1BCount :
+              activeTab === "rarely_sponsors" ? rarelySponsorCount :
+              jobs.length
+            }
           />
 
           <div className="flex-1 min-w-0">

@@ -28,29 +28,6 @@ const COMPANY_COLORS: Record<string, string> = {
   "default":    "bg-gradient-to-br from-purple-500 to-blue-500",
 };
 
-function H1BBadge({ visa_score, h1b_count }: { visa_score?: number | null; h1b_count?: number | null }) {
-  if (visa_score == null) return null;
-  if (visa_score >= 70) return (
-    <span className="relative group inline-flex items-center gap-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full px-1.5 py-0 text-[10px] font-medium cursor-default">
-      🟢 H1B Verified
-      {(h1b_count ?? 0) > 0 && <span className="opacity-60">·{h1b_count}</span>}
-      <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-48 rounded-lg bg-slate-900 border border-white/10 p-2 text-[10px] text-slate-300 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-xl">
-        DOL-verified: filed {h1b_count ?? 0}+ H1Bs with US Dept of Labor.
-        <br />🟢 ≥70 · 🟡 30–69 · no badge = unknown
-      </span>
-    </span>
-  );
-  if (visa_score >= 30) return (
-    <span className="relative group inline-flex items-center gap-1 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded-full px-1.5 py-0 text-[10px] font-medium cursor-default">
-      🟡 Rarely Sponsors
-      <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 rounded-lg bg-slate-900 border border-white/10 p-2 text-[10px] text-slate-300 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-xl">
-        Limited H1B history in DOL records. May sponsor — verify before applying.
-      </span>
-    </span>
-  );
-  return null;
-}
-
 function CompanyLogo({ company }: { company: string }) {
   const initial = company.charAt(0).toUpperCase();
   const color   = COMPANY_COLORS[company.toLowerCase().trim()] ?? COMPANY_COLORS["default"];
@@ -100,17 +77,14 @@ export function JobCard({ job, status, onStatusChange, roleTracks: _roleTracks, 
 
   return (
     <div className="glass glass-hover rounded-2xl p-4 flex flex-col gap-3">
-      {/* Line 1: Logo + Company + H1B badge + Score ring */}
+      {/* Line 1: Logo + Company + Score ring */}
       <div className="flex items-center gap-2.5">
         <CompanyLogo company={job.company} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-slate-300 text-xs font-medium truncate">{job.company}</span>
-            <H1BBadge visa_score={job.visa_score} h1b_count={job.h1b_count} />
-            {job.visa_score == null && job.h1b_sponsor === true && (
-              <span className="inline-flex items-center gap-1 bg-violet-500/20 text-violet-300 border border-violet-500/30 rounded-full px-1.5 py-0 text-[10px] font-medium">
-                <CheckCircle2 className="w-2.5 h-2.5" /> H1B
-              </span>
+            {(job.visa_score ?? 0) >= 70 && (
+              <span className="text-[11px] leading-none" title="DOL-verified H1B sponsor">🟢</span>
             )}
           </div>
           {/* Line 2: Job title */}
