@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, MapPin, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Grade } from "@/lib/types";
 
 const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+"];
 const WORK_MODES = ["all", "remote", "hybrid", "onsite"] as const;
+
+const LOCATIONS_TOP = ["Remote", "California", "Texas", "New York", "Washington", "Florida"];
+const LOCATIONS_MORE = ["Georgia", "Illinois", "Colorado", "Virginia", "Massachusetts", "North Carolina", "Arizona", "Nevada", "Ohio", "Michigan"];
 
 export interface FilterState {
   search: string;
@@ -16,6 +19,8 @@ export interface FilterState {
   visaOnly: boolean;
   h1bOnly: boolean;
   verifiedH1BOnly: boolean;
+  locations: Set<string>;
+  citySearch: string;
 }
 
 interface FiltersSidebarProps {
@@ -31,11 +36,20 @@ export function FiltersSidebar({
   totalShowing,
   totalAll,
 }: FiltersSidebarProps) {
+  const [showMoreStates, setShowMoreStates] = useState(false);
+
   const toggleGrade = (grade: Grade) => {
     const next = new Set(filters.grades);
     if (next.has(grade)) next.delete(grade);
     else next.add(grade);
     onChange({ ...filters, grades: next });
+  };
+
+  const toggleLocation = (loc: string) => {
+    const next = new Set(filters.locations);
+    if (next.has(loc)) next.delete(loc);
+    else next.add(loc);
+    onChange({ ...filters, locations: next });
   };
 
   const reset = () =>
@@ -46,7 +60,13 @@ export function FiltersSidebar({
       visaOnly: false,
       h1bOnly: false,
       verifiedH1BOnly: false,
+      locations: new Set<string>(),
+      citySearch: "",
     });
+
+  const visibleLocations = showMoreStates
+    ? [...LOCATIONS_TOP, ...LOCATIONS_MORE]
+    : LOCATIONS_TOP;
 
   return (
     <aside className="w-full lg:w-64 flex-shrink-0">
@@ -133,8 +153,58 @@ export function FiltersSidebar({
           </div>
         </div>
 
+        {/* Location filter */}
+        <div className="mb-5">
+          <label className="text-slate-400 text-xs font-medium mb-2 block uppercase tracking-wider flex items-center gap-1">
+            <MapPin className="w-3 h-3" /> Location
+            {filters.locations.size > 0 && (
+              <span className="ml-auto text-violet-400 font-semibold">{filters.locations.size}</span>
+            )}
+          </label>
+
+          {/* City search */}
+          <div className="relative mb-2">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
+            <Input
+              placeholder="Search city..."
+              value={filters.citySearch}
+              onChange={(e) => onChange({ ...filters, citySearch: e.target.value })}
+              className="pl-8 h-8 text-xs"
+            />
+          </div>
+
+          {/* State checkboxes */}
+          <div className="space-y-1.5">
+            {visibleLocations.map((loc) => (
+              <label key={loc} className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={filters.locations.has(loc)}
+                  onChange={() => toggleLocation(loc)}
+                  className="w-3.5 h-3.5 rounded border-white/20 bg-transparent accent-violet-500 cursor-pointer"
+                />
+                <span className={cn(
+                  "text-sm transition-colors",
+                  filters.locations.has(loc) ? "text-white" : "text-slate-400 group-hover:text-slate-200",
+                )}>
+                  {loc === "Remote" ? "🏠 Remote" : loc}
+                </span>
+              </label>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowMoreStates((v) => !v)}
+            className="mt-2 flex items-center gap-1 text-xs text-slate-500 hover:text-violet-400 transition-colors"
+          >
+            <ChevronDown className={cn("w-3 h-3 transition-transform", showMoreStates && "rotate-180")} />
+            {showMoreStates ? "Show fewer states" : "Show more states..."}
+          </button>
+        </div>
+
         {/* Visa toggles */}
-        <div className="space-y-2 mb-5">
+        <div className="space-y-2">
           <label className="text-slate-400 text-xs font-medium block uppercase tracking-wider">
             Visa Filters
           </label>
@@ -202,7 +272,6 @@ export function FiltersSidebar({
             </span>
           </label>
         </div>
-
       </div>
     </aside>
   );
