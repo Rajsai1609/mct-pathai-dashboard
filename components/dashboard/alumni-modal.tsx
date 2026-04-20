@@ -1,6 +1,7 @@
 "use client";
 
-import { X, ExternalLink, GraduationCap, MapPin, Users } from "lucide-react";
+import { useEffect } from "react";
+import { ExternalLink, GraduationCap, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Alumni } from "@/lib/types";
 
@@ -45,15 +46,40 @@ export function AlumniModal({ alumni, company, studentName, onClose }: AlumniMod
   const others    = alumni.filter((a) => !a.willing_to_refer);
   const sorted    = [...referrers, ...others];
 
+  // Prevent body scroll while modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = "auto"; };
+  }, []);
+
+  // ESC key closes modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
     >
-      <div className="glass rounded-2xl w-full max-w-lg p-6 relative border border-white/10 max-h-[85vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div>
+      <div
+        className="relative bg-gray-900 border border-purple-500/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white z-[10001] transition-colors"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+
+        <div className="p-6">
+          {/* Header */}
+          <div className="mb-4 pr-6">
             <div className="flex items-center gap-2 mb-0.5">
               <Users className="w-4 h-4 text-violet-400" />
               <h3 className="text-white font-bold text-lg">Alumni at {company}</h3>
@@ -64,90 +90,84 @@ export function AlumniModal({ alumni, company, studentName, onClose }: AlumniMod
                 : "Connect with alumni for referrals"}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-500 hover:text-white transition-colors ml-4 flex-shrink-0"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
 
-        {/* Alumni list */}
-        <div className="overflow-y-auto flex-1 space-y-3 pr-1">
-          {sorted.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center py-8">
-              No alumni found for this company yet.
-            </p>
-          ) : (
-            sorted.map((alumnus) => (
-              <div
-                key={alumnus.id}
-                className={`rounded-xl border p-3.5 transition-all ${
-                  alumnus.willing_to_refer
-                    ? "bg-violet-500/5 border-violet-500/20 hover:border-violet-500/40 hover:bg-violet-500/10 cursor-pointer"
-                    : "bg-white/3 border-white/8 opacity-60"
-                }`}
-                onClick={() => alumnus.willing_to_refer && openLinkedIn(alumnus, company, studentName)}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-white font-semibold text-sm">{alumnus.full_name}</span>
-                      {alumnus.willing_to_refer && (
-                        <span className="text-[10px] bg-green-500/15 text-green-400 border border-green-500/25 rounded-full px-1.5 py-0">
-                          Open to refer
-                        </span>
+          {/* Alumni list */}
+          <div className="space-y-3">
+            {sorted.length === 0 ? (
+              <p className="text-slate-400 text-sm text-center py-8">
+                No alumni found for this company yet.
+              </p>
+            ) : (
+              sorted.map((alumnus) => (
+                <div
+                  key={alumnus.id}
+                  className={`rounded-xl border p-3.5 transition-all ${
+                    alumnus.willing_to_refer
+                      ? "bg-violet-500/5 border-violet-500/20 hover:border-violet-500/40 hover:bg-violet-500/10 cursor-pointer"
+                      : "bg-white/3 border-white/8 opacity-60"
+                  }`}
+                  onClick={() => alumnus.willing_to_refer && openLinkedIn(alumnus, company, studentName)}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-white font-semibold text-sm">{alumnus.full_name}</span>
+                        {alumnus.willing_to_refer && (
+                          <span className="text-[10px] bg-green-500/15 text-green-400 border border-green-500/25 rounded-full px-1.5 py-0">
+                            Open to refer
+                          </span>
+                        )}
+                        {alumnus.visa_status && VISA_LABELS[alumnus.visa_status] && (
+                          <span className="text-[10px] bg-blue-500/15 text-blue-400 border border-blue-500/25 rounded-full px-1.5 py-0">
+                            {VISA_LABELS[alumnus.visa_status]}
+                          </span>
+                        )}
+                      </div>
+
+                      {alumnus.current_title && (
+                        <p className="text-slate-300 text-xs mt-0.5">{alumnus.current_title}</p>
                       )}
-                      {alumnus.visa_status && VISA_LABELS[alumnus.visa_status] && (
-                        <span className="text-[10px] bg-blue-500/15 text-blue-400 border border-blue-500/25 rounded-full px-1.5 py-0">
-                          {VISA_LABELS[alumnus.visa_status]}
-                        </span>
-                      )}
-                    </div>
 
-                    {alumnus.current_title && (
-                      <p className="text-slate-300 text-xs mt-0.5">{alumnus.current_title}</p>
-                    )}
-
-                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                      <span className="flex items-center gap-1 text-slate-500 text-[11px]">
-                        <GraduationCap className="w-3 h-3" />
-                        {alumnus.university}
-                        {alumnus.graduation_year && ` · ${alumnus.graduation_year}`}
-                      </span>
-                      {alumnus.location && (
+                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                         <span className="flex items-center gap-1 text-slate-500 text-[11px]">
-                          <MapPin className="w-3 h-3" />
-                          {alumnus.location}
+                          <GraduationCap className="w-3 h-3" />
+                          {alumnus.university}
+                          {alumnus.graduation_year && ` · ${alumnus.graduation_year}`}
                         </span>
-                      )}
+                        {alumnus.location && (
+                          <span className="flex items-center gap-1 text-slate-500 text-[11px]">
+                            <MapPin className="w-3 h-3" />
+                            {alumnus.location}
+                          </span>
+                        )}
+                      </div>
                     </div>
+
+                    {alumnus.willing_to_refer && (
+                      <div className="flex-shrink-0">
+                        <span className="inline-flex items-center gap-1 text-violet-400 text-[11px]">
+                          <ExternalLink className="w-3 h-3" />
+                          LinkedIn
+                        </span>
+                      </div>
+                    )}
                   </div>
-
-                  {alumnus.willing_to_refer && (
-                    <div className="flex-shrink-0">
-                      <span className="inline-flex items-center gap-1 text-violet-400 text-[11px]">
-                        <ExternalLink className="w-3 h-3" />
-                        LinkedIn
-                      </span>
-                    </div>
-                  )}
                 </div>
-              </div>
-            ))
+              ))
+            )}
+          </div>
+
+          {/* Footer tip */}
+          {referrers.length > 0 && (
+            <p className="text-slate-600 text-[11px] mt-3 text-center">
+              Clicking a card opens LinkedIn + copies a referral message to your clipboard
+            </p>
           )}
+
+          <Button variant="outline" size="sm" onClick={onClose} className="mt-3 w-full">
+            Close
+          </Button>
         </div>
-
-        {/* Footer tip */}
-        {referrers.length > 0 && (
-          <p className="text-slate-600 text-[11px] mt-3 text-center">
-            Clicking a card opens LinkedIn + copies a referral message to your clipboard
-          </p>
-        )}
-
-        <Button variant="outline" size="sm" onClick={onClose} className="mt-3 w-full">
-          Close
-        </Button>
       </div>
     </div>
   );
