@@ -60,6 +60,21 @@ export function Hero({ jobCount = 0 }: HeroProps) {
               <Link href="#how-it-works">How It Works</Link>
             </Button>
           </div>
+
+          {/* Trust signals */}
+          <div className="flex items-center justify-center gap-6 sm:gap-10 mt-10 flex-wrap animate-fade-in">
+            {[
+              { value: "44+",   label: "Active Students" },
+              { value: "13.8K+", label: "Jobs Daily" },
+              { value: "24K+",  label: "Verified H1B Employers" },
+              { value: "Free",  label: "Forever for Beta Users" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

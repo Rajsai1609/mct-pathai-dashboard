@@ -8,6 +8,10 @@ import { StudentsSection } from "@/components/landing/students-section";
 import { CtaSection } from "@/components/landing/cta-section";
 import { ContactSection } from "@/components/landing/contact-section";
 import { FreshnessSection } from "@/components/landing/freshness-section";
+import { TestimonialsSection } from "@/components/landing/testimonials-section";
+import { VideoDemoSection } from "@/components/landing/video-demo-section";
+import { FAQSection } from "@/components/landing/faq-section";
+import { ComparisonSection } from "@/components/landing/comparison-section";
 import { fetchJobCount, fetchStudentCount } from "@/lib/supabase";
 
 export const revalidate = 300; // revalidate every 5 minutes
@@ -57,24 +61,36 @@ export default async function HomePage() {
         {/* 4 — How it works */}
         <HowItWorks />
 
-        {/* 5 — 10-dimensional AI matching */}
+        {/* 5 — Student testimonials */}
+        <TestimonialsSection />
+
+        {/* 6 — Video demo */}
+        <VideoDemoSection />
+
+        {/* 7 — 10-dimensional AI matching */}
         <Dimensions />
 
-        {/* 6 — Built only for international students */}
+        {/* 8 — Built only for international students */}
         <ValueProps />
 
-        {/* 7 — How fresh are our jobs */}
+        {/* 9 — MCT PathAI vs LinkedIn */}
+        <ComparisonSection />
+
+        {/* 10 — How fresh are our jobs */}
         <FreshnessSection />
 
-        {/* 8 — Live student dashboards */}
+        {/* 11 — Live student dashboards */}
         <Suspense fallback={<StudentsSkeleton />}>
           <StudentsSection />
         </Suspense>
 
-        {/* 9 — Urgency CTA */}
+        {/* 12 — FAQ */}
+        <FAQSection />
+
+        {/* 13 — Urgency CTA */}
         <CtaSection studentCount={studentCount} />
 
-        {/* 9 — Contact */}
+        {/* 14 — Contact */}
         <ContactSection />
       </div>
 
