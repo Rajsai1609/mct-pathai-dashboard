@@ -34,7 +34,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
 
   return (
     <>
-      <section className="py-24 container mx-auto px-6">
+      <section id="waitlist" className="py-24 container mx-auto px-6">
         <div className="max-w-3xl mx-auto text-center glass rounded-3xl p-12 gradient-border relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-violet-600/10 to-blue-600/10 rounded-3xl" />
           <div className="relative z-10">
