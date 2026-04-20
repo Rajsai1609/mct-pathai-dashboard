@@ -79,12 +79,14 @@ interface JobCardProps {
   job: JobMatch;
   status?: ApplicationStatus | null;
   onStatusChange?: (jobId: string, status: ApplicationStatus | null) => void;
+  statusDropdown?: boolean;
 }
 
-export function JobCard({ job, status, onStatusChange }: JobCardProps) {
+export function JobCard({ job, status, onStatusChange, statusDropdown }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const freshness = getFreshnessBadge(job.date_posted);
+  const isSaved = status != null;
 
   return (
     <div className="glass glass-hover rounded-2xl p-4 flex flex-col gap-3">
@@ -156,33 +158,67 @@ export function JobCard({ job, status, onStatusChange }: JobCardProps) {
         )}
       </div>
 
-      {/* Line 5: Track status pills */}
+      {/* Line 5: Status pills or dropdown */}
       {onStatusChange && (
-        <div className="flex gap-1 flex-wrap">
-          {STATUS_OPTIONS.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              onClick={() => onStatusChange(job.id, status === s.value ? null : s.value)}
-              className={cn(
-                "px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all",
-                status === s.value
-                  ? s.activeClass
-                  : "bg-white/5 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-300",
-              )}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
+        statusDropdown ? (
+          <select
+            value={status ?? ""}
+            onChange={(e) => {
+              const val = e.target.value as ApplicationStatus;
+              onStatusChange(job.id, val || null);
+            }}
+            className="w-full rounded-lg bg-white/5 border border-white/15 text-slate-300 text-xs px-2 py-1.5 focus:outline-none focus:border-violet-500/50"
+          >
+            <option value="">— Update status —</option>
+            <option value="saved">📌 Saved</option>
+            <option value="applied">📧 Applied</option>
+            <option value="interview">💬 Interviewing</option>
+            <option value="offer">🎉 Offer</option>
+            <option value="rejected">❌ Rejected</option>
+          </select>
+        ) : (
+          <div className="flex gap-1 flex-wrap">
+            {STATUS_OPTIONS.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                onClick={() => onStatusChange(job.id, status === s.value ? null : s.value)}
+                className={cn(
+                  "px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all",
+                  status === s.value
+                    ? s.activeClass
+                    : "bg-white/5 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-300",
+                )}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )
       )}
 
-      {/* Line 6: Apply button */}
-      <Button variant="outline" size="sm" className="w-full mt-auto" asChild>
-        <Link href={job.url} target="_blank" rel="noopener noreferrer">
-          Apply Now <ExternalLink className="w-3.5 h-3.5" />
-        </Link>
-      </Button>
+      {/* Line 6: Save + Apply buttons */}
+      <div className="flex gap-2 mt-auto">
+        {onStatusChange && (
+          <button
+            type="button"
+            onClick={() => onStatusChange(job.id, isSaved ? null : "saved")}
+            className={cn(
+              "flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex-shrink-0",
+              isSaved
+                ? "bg-yellow-500/20 border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30"
+                : "bg-white/5 border-white/15 text-slate-400 hover:border-white/30 hover:text-slate-200",
+            )}
+          >
+            {isSaved ? "⭐ Saved" : "☆ Save"}
+          </button>
+        )}
+        <Button variant="outline" size="sm" className={cn("mt-auto", onStatusChange ? "flex-1" : "w-full")} asChild>
+          <Link href={job.url} target="_blank" rel="noopener noreferrer">
+            Apply Now <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }

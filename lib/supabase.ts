@@ -315,3 +315,45 @@ export async function removeApplication(
   }
   return true;
 }
+
+export async function saveJob(studentId: string, jobId: string): Promise<boolean> {
+  return upsertApplication(studentId, jobId, "saved");
+}
+
+export async function unsaveJob(studentId: string, jobId: string): Promise<boolean> {
+  return removeApplication(studentId, jobId);
+}
+
+export async function updateJobStatus(
+  studentId: string,
+  jobId: string,
+  status: string,
+): Promise<boolean> {
+  const client = getClient();
+  if (!client) return false;
+  const { error } = await client
+    .from("job_applications")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("student_id", studentId)
+    .eq("job_id", jobId);
+  if (error) {
+    console.error("updateJobStatus:", error.message);
+    return false;
+  }
+  return true;
+}
+
+export async function fetchSavedJobs(studentId: string): Promise<JobApplication[]> {
+  const client = getClient();
+  if (!client) return [];
+  const { data, error } = await client
+    .from("job_applications")
+    .select("*, scraped_jobs(*)")
+    .eq("student_id", studentId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error("fetchSavedJobs:", error.message);
+    return [];
+  }
+  return (data ?? []) as JobApplication[];
+}
