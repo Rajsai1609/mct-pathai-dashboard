@@ -193,7 +193,6 @@ export function DashboardClient({
                   job={job}
                   status={applications.get(job.id) ?? null}
                   onStatusChange={handleStatusChange}
-                  statusDropdown
                   roleTracks={currentTracks}
                   studentName={studentName}
                   studentUniversity={studentUniversity}

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { MapPin, ExternalLink, CheckCircle2, XCircle, Users } from "lucide-react";
+import { MapPin, ExternalLink, CheckCircle2, XCircle, Users, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
@@ -71,25 +71,16 @@ function getFreshnessBadge(datePosted: string | null | undefined): { label: stri
   return null;
 }
 
-const STATUS_OPTIONS: { value: ApplicationStatus; label: string; activeClass: string }[] = [
-  { value: "saved",     label: "Saved",     activeClass: "bg-slate-600 border-slate-500 text-white" },
-  { value: "applied",   label: "Applied",   activeClass: "bg-violet-600 border-violet-500 text-white" },
-  { value: "interview", label: "Interview", activeClass: "bg-amber-600 border-amber-500 text-white" },
-  { value: "offer",     label: "Offer",     activeClass: "bg-green-600 border-green-500 text-white" },
-  { value: "rejected",  label: "Rejected",  activeClass: "bg-red-700 border-red-600 text-white" },
-];
-
 interface JobCardProps {
   job: JobMatch;
   status?: ApplicationStatus | null;
   onStatusChange?: (jobId: string, status: ApplicationStatus | null) => void;
-  statusDropdown?: boolean;
   roleTracks?: string[];
   studentName?: string;
   studentUniversity?: string;
 }
 
-export function JobCard({ job, status, onStatusChange, statusDropdown, roleTracks, studentName, studentUniversity }: JobCardProps) {
+export function JobCard({ job, status, onStatusChange, roleTracks, studentName, studentUniversity }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const freshness = getFreshnessBadge(job.date_posted);
@@ -213,60 +204,37 @@ export function JobCard({ job, status, onStatusChange, statusDropdown, roleTrack
         />
       )}
 
-      {/* Line 5: Status pills or dropdown */}
-      {onStatusChange && (
-        statusDropdown ? (
-          <select
-            value={status ?? ""}
-            onChange={(e) => {
-              const val = e.target.value as ApplicationStatus;
-              onStatusChange(job.id, val || null);
-            }}
-            className="w-full rounded-lg bg-white/5 border border-white/15 text-slate-300 text-xs px-2 py-1.5 focus:outline-none focus:border-violet-500/50"
-          >
-            <option value="">— Update status —</option>
-            <option value="saved">📌 Saved</option>
-            <option value="applied">📧 Applied</option>
-            <option value="interview">💬 Interviewing</option>
-            <option value="offer">🎉 Offer</option>
-            <option value="rejected">❌ Rejected</option>
-          </select>
-        ) : (
-          <div className="flex gap-1 flex-wrap">
-            {STATUS_OPTIONS.map((s) => (
-              <button
-                key={s.value}
-                type="button"
-                onClick={() => onStatusChange(job.id, status === s.value ? null : s.value)}
-                className={cn(
-                  "px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all",
-                  status === s.value
-                    ? s.activeClass
-                    : "bg-white/5 border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-300",
-                )}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        )
-      )}
-
-      {/* Line 6: Save + Apply buttons */}
+      {/* Actions: Save/status button + Apply Now */}
       <div className="flex gap-2 mt-auto">
         {onStatusChange && (
-          <button
-            type="button"
-            onClick={() => onStatusChange(job.id, isSaved ? null : "saved")}
-            className={cn(
-              "flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex-shrink-0",
-              isSaved
-                ? "bg-yellow-500/20 border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30"
-                : "bg-white/5 border-white/15 text-slate-400 hover:border-white/30 hover:text-slate-200",
-            )}
-          >
-            {isSaved ? "⭐ Saved" : "☆ Save"}
-          </button>
+          isSaved ? (
+            <div className="relative flex-shrink-0">
+              <select
+                value={status ?? "saved"}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  onStatusChange(job.id, val === "" ? null : val as ApplicationStatus);
+                }}
+                className="appearance-none pl-3 pr-6 py-1.5 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 text-xs font-medium focus:outline-none focus:border-yellow-500/70 cursor-pointer"
+              >
+                <option value="saved">⭐ Saved</option>
+                <option value="applied">📧 Applied</option>
+                <option value="interview">💬 Interviewing</option>
+                <option value="offer">🎉 Offer</option>
+                <option value="rejected">❌ Rejected</option>
+                <option value="">✕ Remove</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-yellow-300" />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onStatusChange(job.id, "saved")}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex-shrink-0 bg-white/5 border-white/15 text-slate-400 hover:border-white/30 hover:text-slate-200"
+            >
+              ☆ Save
+            </button>
+          )
         )}
         <Button variant="outline" size="sm" className={cn("mt-auto", onStatusChange ? "flex-1" : "w-full")} asChild>
           <Link href={job.url} target="_blank" rel="noopener noreferrer">
