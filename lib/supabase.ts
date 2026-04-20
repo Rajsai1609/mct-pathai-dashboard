@@ -371,6 +371,29 @@ export async function fetchAlumniAtCompany(
   return (data ?? []) as Alumni[];
 }
 
+export async function fetchAllAlumni(studentUniversity?: string): Promise<Alumni[]> {
+  const client = getClient();
+  if (!client) return [];
+
+  let query = client
+    .from("alumni")
+    .select("id, full_name, linkedin_url, current_company, current_title, university, graduation_year, major, visa_status, location, willing_to_refer, added_at")
+    .order("current_company")
+    .order("willing_to_refer", { ascending: false })
+    .limit(200);
+
+  if (studentUniversity) {
+    query = query.ilike("university", `%${studentUniversity}%`);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("fetchAllAlumni:", error.message);
+    return [];
+  }
+  return (data ?? []) as Alumni[];
+}
+
 export async function fetchSavedJobs(studentId: string): Promise<JobApplication[]> {
   const client = getClient();
   if (!client) return [];

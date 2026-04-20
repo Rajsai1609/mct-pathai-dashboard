@@ -2,14 +2,13 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { MapPin, ExternalLink, CheckCircle2, XCircle, ChevronDown } from "lucide-react";
+import { MapPin, ExternalLink, CheckCircle2, XCircle, ChevronDown, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
 import { AlumniModal } from "./alumni-modal";
 import { cn, GRADE_BG } from "@/lib/utils";
 import type { JobMatch, ApplicationStatus, Alumni } from "@/lib/types";
-import { getMatchedTrack } from "@/lib/role-tracks";
 import { fetchAlumniAtCompany } from "@/lib/supabase";
 
 const COMPANY_COLORS: Record<string, string> = {
@@ -80,14 +79,11 @@ interface JobCardProps {
   studentUniversity?: string;
 }
 
-export function JobCard({ job, status, onStatusChange, roleTracks, studentName, studentUniversity }: JobCardProps) {
+export function JobCard({ job, status, onStatusChange, roleTracks: _roleTracks, studentName, studentUniversity }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const freshness = getFreshnessBadge(job.date_posted);
   const isSaved = status != null;
-  const matchedTrack = roleTracks && roleTracks.length > 1
-    ? getMatchedTrack(`${job.title} ${job.job_category ?? ""}`, roleTracks)
-    : null;
 
   const [alumni, setAlumni] = useState<Alumni[] | null>(null);
   const [alumniOpen, setAlumniOpen] = useState(false);
@@ -172,12 +168,20 @@ export function JobCard({ job, status, onStatusChange, roleTracks, studentName, 
         )}
       </div>
 
-      {/* Matched track badge — only shown when student has multiple tracks */}
-      {matchedTrack && (
-        <div className="text-xs text-purple-400 flex items-center gap-1">
-          Matched via: {matchedTrack.icon} {matchedTrack.label}
-        </div>
-      )}
+      {/* Alumni badge */}
+      <button
+        type="button"
+        onClick={handleAlumniClick}
+        className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition-colors w-fit"
+      >
+        <Users className="w-3 h-3" />
+        {alumni === null
+          ? "👥 See alumni here"
+          : alumni.length === 0
+            ? "No alumni yet"
+            : `👥 ${alumni.length} alumni here`
+        }
+      </button>
 
       {/* Alumni modal */}
       {alumniOpen && alumni !== null && (

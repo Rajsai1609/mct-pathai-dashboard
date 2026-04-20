@@ -214,6 +214,8 @@ export function DashboardClient({
             onChange={setFilters}
             totalShowing={filtered.length}
             totalAll={jobs.length}
+            studentName={studentName}
+            studentUniversity={studentUniversity}
           />
 
           <div className="flex-1 min-w-0">
