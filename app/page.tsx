@@ -14,6 +14,8 @@ import { FAQSection } from "@/components/landing/faq-section";
 import { ComparisonSection } from "@/components/landing/comparison-section";
 import { PainPointsSection } from "@/components/landing/pain-points-section";
 import { UrgencySection } from "@/components/landing/urgency-section";
+import { DemoDashboardsSection } from "@/components/landing/demo-dashboards-section";
+import { DashboardPreviewBanner } from "@/components/landing/dashboard-preview-banner";
 import { fetchJobCount, fetchStudentCount } from "@/lib/supabase";
 
 export const revalidate = 300; // revalidate every 5 minutes
@@ -66,7 +68,10 @@ export default async function HomePage() {
         {/* 5 — How it works */}
         <HowItWorks />
 
-        {/* 6 — Student testimonials */}
+        {/* 6 — Live beta dashboards */}
+        <DemoDashboardsSection />
+
+        {/* 7 — Student testimonials */}
         <TestimonialsSection />
 
         {/* 7 — Video demo */}
@@ -95,7 +100,12 @@ export default async function HomePage() {
         {/* 14 — FAQ */}
         <FAQSection />
 
-        {/* 15 — Stop Waiting. Start Matching. */}
+        {/* 15 — Dashboard preview banner */}
+        <section className="py-16 container mx-auto px-6">
+          <DashboardPreviewBanner />
+        </section>
+
+        {/* 16 — Stop Waiting. Start Matching. */}
         <CtaSection studentCount={studentCount} />
 
         {/* 16 — Contact */}
