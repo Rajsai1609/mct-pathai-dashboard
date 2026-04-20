@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { uploadResume, submitWaitlist } from "@/lib/supabase";
 import { ROLE_TRACK_OPTIONS } from "@/lib/role-tracks";
 
@@ -27,8 +28,9 @@ interface WaitlistModalProps {
 
 export function WaitlistModal({ onClose }: WaitlistModalProps) {
   const [form, setForm] = useState({
-    name: "", email: "", phone: "", visa_status: "", target_role: "", role_track: "",
+    name: "", email: "", phone: "", visa_status: "", target_role: "",
   });
+  const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [file, setFile]         = useState<File | null>(null);
   const [fileErr, setFileErr]   = useState("");
   const [phase, setPhase]       = useState<Phase>("idle");
@@ -60,7 +62,7 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.phone || !form.visa_status || !form.role_track || !file) return;
+    if (!form.name || !form.email || !form.phone || !form.visa_status || selectedTracks.length === 0 || !file) return;
 
     // Phase 1 — upload resume
     setPhase("uploading");
@@ -75,7 +77,12 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
 
     // Phase 2 — save waitlist row
     setPhase("saving");
-    const result = await submitWaitlist({ ...form, resume_url });
+    const result = await submitWaitlist({
+      ...form,
+      role_track: selectedTracks[0] ?? "",
+      role_tracks: selectedTracks,
+      resume_url,
+    });
 
     if (result.ok)        setPhase("success");
     else if (result.duplicate) setPhase("duplicate");
@@ -197,25 +204,48 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
                 </select>
               </div>
 
-              {/* Role track */}
+              {/* Role tracks — pill grid, max 3 */}
               <div>
-                <label className="text-slate-400 text-xs font-medium mb-1.5 block">
-                  Target Role Track <span className="text-violet-400">*</span>
-                </label>
-                <select
-                  value={form.role_track}
-                  onChange={set("role_track")}
-                  required
-                  disabled={isLoading}
-                  className="flex h-9 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 disabled:opacity-50"
-                >
-                  <option value="" disabled className="bg-slate-900">Select your target role…</option>
-                  {ROLE_TRACK_OPTIONS.filter(o => o.value !== "general").map(o => (
-                    <option key={o.value} value={o.value} className="bg-slate-900">
-                      {o.icon} {o.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-slate-400 text-xs font-medium">
+                    Target Role Tracks <span className="text-violet-400">*</span>
+                  </label>
+                  <span className="text-xs text-slate-500">{selectedTracks.length}/3 selected</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {ROLE_TRACK_OPTIONS.filter(o => o.value !== "general").map(o => {
+                    const isSelected = selectedTracks.includes(o.value);
+                    const isFull = selectedTracks.length >= 3 && !isSelected;
+                    return (
+                      <button
+                        key={o.value}
+                        type="button"
+                        disabled={isLoading || isFull}
+                        onClick={() => {
+                          if (isSelected) {
+                            setSelectedTracks(selectedTracks.filter(t => t !== o.value));
+                          } else if (selectedTracks.length < 3) {
+                            setSelectedTracks([...selectedTracks, o.value]);
+                          }
+                        }}
+                        className={cn(
+                          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all",
+                          isSelected
+                            ? "bg-violet-600 border-violet-500 text-white"
+                            : isFull
+                              ? "bg-white/3 border-white/5 text-slate-600 cursor-not-allowed"
+                              : "bg-white/5 border-white/10 text-slate-300 hover:border-violet-500/50 hover:text-white",
+                        )}
+                      >
+                        <span>{o.icon}</span>
+                        <span>{o.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {selectedTracks.length === 0 && (
+                  <p className="text-slate-600 text-xs mt-1">Select at least one track</p>
+                )}
               </div>
 
               {/* Target role */}

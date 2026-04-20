@@ -3,6 +3,7 @@ export interface Student {
   name: string;
   email?: string;
   role_track?: string;
+  role_tracks?: string[];
 }
 
 export interface ScrapedJob {

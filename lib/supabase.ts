@@ -21,6 +21,7 @@ export interface WaitlistEntry {
   visa_status: string;
   target_role: string;
   role_track?: string;
+  role_tracks?: string[];
   resume_url?: string;
 }
 
@@ -123,7 +124,7 @@ export async function fetchStudent(studentId: string): Promise<Student | null> {
   if (!client) return null;
   const { data, error } = await client
     .from("students")
-    .select("id, name, email, role_track")
+    .select("id, name, email, role_track, role_tracks")
     .eq("id", studentId)
     .single();
   if (error) {
@@ -137,14 +138,22 @@ export async function updateStudentTrack(
   studentId: string,
   roleTrack: string,
 ): Promise<boolean> {
+  return updateStudentTracks(studentId, roleTrack === "general" ? [] : [roleTrack]);
+}
+
+export async function updateStudentTracks(
+  studentId: string,
+  roleTracks: string[],
+): Promise<boolean> {
   const client = getClient();
   if (!client) return false;
+  const primaryTrack = roleTracks[0] ?? "general";
   const { error } = await client
     .from("students")
-    .update({ role_track: roleTrack })
+    .update({ role_track: primaryTrack, role_tracks: roleTracks })
     .eq("id", studentId);
   if (error) {
-    console.error("updateStudentTrack:", error.message);
+    console.error("updateStudentTracks:", error.message);
     return false;
   }
   return true;

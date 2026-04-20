@@ -6,13 +6,13 @@ import { StatsCards } from "./stats-cards";
 import { JobCard } from "./job-card";
 import { FiltersSidebar, type FilterState } from "./filters-sidebar";
 import type { JobMatch, Grade } from "@/lib/types";
-import { updateStudentTrack } from "@/lib/supabase";
+import { updateStudentTracks } from "@/lib/supabase";
 
 interface DashboardClientProps {
   jobs: JobMatch[];
   studentName: string;
   studentId: string;
-  roleTrack: string;
+  roleTracks: string[];
 }
 
 const DEFAULT_FILTERS: FilterState = {
@@ -28,17 +28,17 @@ export function DashboardClient({
   jobs,
   studentName,
   studentId,
-  roleTrack,
+  roleTracks,
 }: DashboardClientProps) {
   const router = useRouter();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-  const [currentTrack, setCurrentTrack] = useState(roleTrack);
+  const [currentTracks, setCurrentTracks] = useState<string[]>(roleTracks);
   const [trackSaved, setTrackSaved] = useState(false);
 
-  const handleTrackChange = async (newTrack: string) => {
-    setCurrentTrack(newTrack);
+  const handleTracksChange = async (newTracks: string[]) => {
+    setCurrentTracks(newTracks);
     setTrackSaved(false);
-    await updateStudentTrack(studentId, newTrack);
+    await updateStudentTracks(studentId, newTracks);
     setTrackSaved(true);
     router.refresh();
   };
@@ -82,8 +82,8 @@ export function DashboardClient({
           onChange={setFilters}
           totalShowing={filtered.length}
           totalAll={jobs.length}
-          roleTrack={currentTrack}
-          onTrackChange={handleTrackChange}
+          roleTracks={currentTracks}
+          onTracksChange={handleTracksChange}
           trackSaved={trackSaved}
         />
 

@@ -24,3 +24,8 @@ export const ROLE_TRACK_OPTIONS = Object.entries(ROLE_TRACK_META).map(
 export function getTrackMeta(track: string | undefined | null): TrackMeta {
   return ROLE_TRACK_META[track ?? "general"] ?? ROLE_TRACK_META.general;
 }
+
+export function getTracksDisplay(tracks: string[] | undefined | null): TrackMeta[] {
+  if (!tracks || tracks.length === 0) return [];
+  return tracks.map((t) => ROLE_TRACK_META[t] ?? ROLE_TRACK_META.general);
+}
