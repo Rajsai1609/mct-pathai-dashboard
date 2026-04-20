@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { StatsCards } from "./stats-cards";
 import { JobCard } from "./job-card";
 import { FiltersSidebar, type FilterState } from "./filters-sidebar";
@@ -16,7 +17,7 @@ interface DashboardClientProps {
 
 const DEFAULT_FILTERS: FilterState = {
   search: "",
-  grades: new Set(["A+", "A", "B+", "B"]) as Set<Grade>,
+  grades: new Set(["A+", "A", "B+", "B", "C+"]) as Set<Grade>,
   workMode: "all",
   visaOnly: false,
   h1bOnly: false,
@@ -29,12 +30,17 @@ export function DashboardClient({
   studentId,
   roleTrack,
 }: DashboardClientProps) {
+  const router = useRouter();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [currentTrack, setCurrentTrack] = useState(roleTrack);
+  const [trackSaved, setTrackSaved] = useState(false);
 
   const handleTrackChange = async (newTrack: string) => {
     setCurrentTrack(newTrack);
+    setTrackSaved(false);
     await updateStudentTrack(studentId, newTrack);
+    setTrackSaved(true);
+    router.refresh();
   };
 
   const filtered = useMemo(() => {
@@ -68,12 +74,9 @@ export function DashboardClient({
 
   return (
     <div className="space-y-8">
-      {/* Stats */}
       <StatsCards stats={stats} />
 
-      {/* Main layout */}
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Filters */}
         <FiltersSidebar
           filters={filters}
           onChange={setFilters}
@@ -81,9 +84,9 @@ export function DashboardClient({
           totalAll={jobs.length}
           roleTrack={currentTrack}
           onTrackChange={handleTrackChange}
+          trackSaved={trackSaved}
         />
 
-        {/* Job grid */}
         <div className="flex-1 min-w-0">
           {filtered.length === 0 ? (
             <div className="glass rounded-2xl p-12 text-center text-slate-400">

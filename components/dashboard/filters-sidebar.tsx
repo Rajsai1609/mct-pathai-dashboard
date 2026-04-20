@@ -25,6 +25,7 @@ interface FiltersSidebarProps {
   totalAll: number;
   roleTrack: string;
   onTrackChange: (track: string) => void;
+  trackSaved?: boolean;
 }
 
 export function FiltersSidebar({
@@ -34,6 +35,7 @@ export function FiltersSidebar({
   totalAll,
   roleTrack,
   onTrackChange,
+  trackSaved,
 }: FiltersSidebarProps) {
   const track = getTrackMeta(roleTrack);
 
@@ -47,7 +49,7 @@ export function FiltersSidebar({
   const reset = () =>
     onChange({
       search: "",
-      grades: new Set(["A+", "A", "B+", "B"]) as Set<Grade>,
+      grades: new Set(["A+", "A", "B+", "B", "C+"]) as Set<Grade>,
       workMode: "all",
       visaOnly: false,
       h1bOnly: false,
@@ -91,7 +93,11 @@ export function FiltersSidebar({
               </option>
             ))}
           </select>
-          <p className="text-slate-600 text-xs mt-1">Changing track retunes your matches</p>
+          <p className="text-slate-600 text-xs mt-1">
+            {trackSaved
+              ? "✓ Track saved — new matches on next pipeline run"
+              : "Saved track is used to rank your next job run"}
+          </p>
         </div>
 
         {/* Result count */}
