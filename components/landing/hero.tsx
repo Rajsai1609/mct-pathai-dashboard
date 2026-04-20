@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WaitlistModal } from "./waitlist-modal";
 
@@ -14,11 +14,19 @@ export function Hero({ jobCount = 0 }: HeroProps) {
   const [open, setOpen] = useState(false);
 
   const jobBadge = jobCount > 0
-    ? `${jobCount.toLocaleString()}+ Jobs Daily`
-    : "Thousands of Jobs Daily";
+    ? `${jobCount.toLocaleString()}+ jobs matched today`
+    : "Thousands of jobs matched today";
 
   return (
     <>
+      {/* Urgency bar */}
+      <div className="bg-amber-500/10 border-b border-amber-500/20 py-2.5 px-6 text-center">
+        <p className="text-amber-300 text-sm font-medium">
+          ⏰ Time matters — the average OPT student has{" "}
+          <span className="font-bold text-amber-200">90 days</span> to find a job after graduation
+        </p>
+      </div>
+
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-glow">
         {/* Background grid */}
         <div
@@ -38,40 +46,39 @@ export function Hero({ jobCount = 0 }: HeroProps) {
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-sm text-violet-300 mb-8 animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_6px_2px_rgba(74,222,128,0.5)]" />
-            <span>Live — Updated Today at 7AM · F1 &amp; OPT Friendly · {jobBadge}</span>
+            <span>Live — {jobBadge} · F1 &amp; OPT Friendly</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-fade-in">
-            <span className="text-white">Find Jobs That </span>
-            <span className="gradient-text">Match You</span>
+            <span className="text-white">Land Your Dream Job </span>
+            <span className="gradient-text">Before Your OPT Expires</span>
           </h1>
 
           <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in">
-            MCT PathAI uses AI to match international students with visa-friendly
-            roles — scored and ranked specifically for your resume, skills, and
-            OPT/H1B eligibility.
+            AI-powered job matching for F1/OPT/STEM OPT/H1B students —{" "}
+            <span className="text-white font-semibold">100% FREE.</span>{" "}
+            Get matched with verified H1B sponsors in seconds, not months.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
             <Button variant="gradient" size="lg" onClick={() => setOpen(true)}>
-              Get Early Access <ArrowRight className="w-5 h-5" />
+              Start Matching Jobs Free <ArrowRight className="w-5 h-5" />
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link href="#how-it-works">How It Works</Link>
+              <Link href="#how-it-works">See How It Works</Link>
             </Button>
           </div>
 
           {/* Trust signals */}
-          <div className="flex items-center justify-center gap-6 sm:gap-10 mt-10 flex-wrap animate-fade-in">
+          <div className="flex items-center justify-center gap-8 sm:gap-14 mt-12 flex-wrap animate-fade-in">
             {[
-              { value: "44+",   label: "Active Students" },
-              { value: "13.8K+", label: "Jobs Daily" },
-              { value: "24K+",  label: "Verified H1B Employers" },
-              { value: "Free",  label: "Forever for Beta Users" },
+              { value: "$120K+",  label: "Avg. Matched Salary" },
+              { value: "100% FREE", label: "Forever for Beta Users" },
+              { value: "24K+",    label: "Verified H1B Employers" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{stat.label}</p>
+                <p className="text-3xl font-black text-white">{stat.value}</p>
+                <p className="text-xs text-slate-400 mt-1">{stat.label}</p>
               </div>
             ))}
           </div>

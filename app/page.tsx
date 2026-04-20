@@ -12,6 +12,8 @@ import { TestimonialsSection } from "@/components/landing/testimonials-section";
 import { VideoDemoSection } from "@/components/landing/video-demo-section";
 import { FAQSection } from "@/components/landing/faq-section";
 import { ComparisonSection } from "@/components/landing/comparison-section";
+import { PainPointsSection } from "@/components/landing/pain-points-section";
+import { UrgencySection } from "@/components/landing/urgency-section";
 import { fetchJobCount, fetchStudentCount } from "@/lib/supabase";
 
 export const revalidate = 300; // revalidate every 5 minutes
@@ -58,39 +60,45 @@ export default async function HomePage() {
         {/* 2 — Hero stats */}
         <StatsSection />
 
-        {/* 4 — How it works */}
+        {/* 4 — Pain points */}
+        <PainPointsSection />
+
+        {/* 5 — How it works */}
         <HowItWorks />
 
-        {/* 5 — Student testimonials */}
+        {/* 6 — Student testimonials */}
         <TestimonialsSection />
 
-        {/* 6 — Video demo */}
+        {/* 7 — Video demo */}
         <VideoDemoSection />
 
-        {/* 7 — 10-dimensional AI matching */}
+        {/* 8 — 10-dimensional AI matching */}
         <Dimensions />
 
-        {/* 8 — Built only for international students */}
+        {/* 9 — Built only for international students */}
         <ValueProps />
 
-        {/* 9 — MCT PathAI vs LinkedIn */}
+        {/* 10 — MCT PathAI vs LinkedIn */}
         <ComparisonSection />
 
-        {/* 10 — How fresh are our jobs */}
+        {/* 11 — How fresh are our jobs */}
         <FreshnessSection />
 
-        {/* 11 — Live student dashboards */}
+        {/* 12 — Cost of waiting */}
+        <UrgencySection />
+
+        {/* 13 — Live student dashboards */}
         <Suspense fallback={<StudentsSkeleton />}>
           <StudentsSection />
         </Suspense>
 
-        {/* 12 — FAQ */}
+        {/* 14 — FAQ */}
         <FAQSection />
 
-        {/* 13 — Urgency CTA */}
+        {/* 15 — Stop Waiting. Start Matching. */}
         <CtaSection studentCount={studentCount} />
 
-        {/* 14 — Contact */}
+        {/* 16 — Contact */}
         <ContactSection />
       </div>
 

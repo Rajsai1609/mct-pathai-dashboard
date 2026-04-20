@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Flame, Users } from "lucide-react";
+import { Flame, Users, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WaitlistModal } from "./waitlist-modal";
 
 const BETA_LIMIT = 50;
+
+const BENEFITS = [
+  "100% FREE forever (beta users)",
+  "Set up in 30 seconds",
+  "No credit card required",
+  "Instant access to your dashboard",
+];
 
 interface CtaSectionProps {
   studentCount: number;
@@ -19,7 +26,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
 
   const urgencyText = isFull
     ? "Beta is full — join the waitlist"
-    : "🔥 50 spots total — filling fast!";
+    : `⏰ Beta closes soon — FREE access ends when we hit ${BETA_LIMIT} users`;
 
   const urgencyStyle = isFull
     ? "bg-slate-500/20 text-slate-300 border-slate-500/30"
@@ -39,17 +46,29 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
             </div>
 
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Ready to Find Your{" "}
-              <span className="gradient-text">Perfect Role?</span>
+              Stop Waiting.{" "}
+              <span className="gradient-text">Start Matching.</span>
             </h2>
 
-            <p className="text-slate-400 mb-8 max-w-lg mx-auto">
+            <p className="text-slate-400 mb-6 max-w-lg mx-auto">
               {isFull
                 ? "Our beta is currently full. Join the waitlist and we'll notify you as soon as a spot opens up."
-                : "Join the first 50 beta students and get FREE access to AI-powered job matching built specifically for F1, OPT & H1B students."}
+                : `Join ${studentCount} international students already using MCT PathAI. Only ${remaining} FREE beta spot${remaining === 1 ? "" : "s"} left.`}
             </p>
 
-            {/* Slot bar — only shown when there are spots */}
+            {/* Benefits checklist */}
+            {!isFull && (
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 justify-center mb-8">
+                {BENEFITS.map((b) => (
+                  <div key={b} className="flex items-center gap-1.5 text-slate-300 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
+                    <span>{b}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Slot bar */}
             {!isFull && (
               <div className="max-w-xs mx-auto mb-8">
                 <div className="flex justify-between text-xs text-slate-500 mb-1.5">
@@ -69,15 +88,11 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
               {isFull ? "Join Waitlist →" : "Claim Your Free Spot →"}
             </Button>
 
-            {isFull ? (
-              <p className="text-slate-500 text-xs mt-4">
-                Beta is full — you&apos;ll be notified when spots open.
-              </p>
-            ) : (
-              <p className="text-slate-500 text-xs mt-4">
-                No credit card · Takes 30 seconds · Powered by MCTechnology LLC
-              </p>
-            )}
+            <p className="text-slate-500 text-xs mt-4">
+              {isFull
+                ? "Beta is full — you'll be notified when spots open."
+                : "No credit card · Takes 30 seconds · Powered by MCTechnology LLC"}
+            </p>
           </div>
         </div>
       </section>
