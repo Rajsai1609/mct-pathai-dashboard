@@ -122,16 +122,29 @@ export async function fetchStudents(): Promise<Student[]> {
 export async function fetchStudent(studentId: string): Promise<Student | null> {
   const client = getClient();
   if (!client) return null;
+
+  // Try with role_tracks first; fall back if the column doesn't exist yet
   const { data, error } = await client
     .from("students")
     .select("id, name, email, role_track, role_tracks")
     .eq("id", studentId)
     .single();
-  if (error) {
-    console.error("fetchStudent:", error.message);
-    return null;
+
+  if (!error) return data as Student;
+
+  // Column missing (pre-migration) — retry without role_tracks
+  if (error.message?.includes("role_tracks")) {
+    const { data: fallback, error: err2 } = await client
+      .from("students")
+      .select("id, name, email, role_track")
+      .eq("id", studentId)
+      .single();
+    if (err2) { console.error("fetchStudent:", err2.message); return null; }
+    return fallback as Student;
   }
-  return data as Student;
+
+  console.error("fetchStudent:", error.message);
+  return null;
 }
 
 export async function updateStudentTrack(
