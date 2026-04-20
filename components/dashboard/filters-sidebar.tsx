@@ -1,18 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Search, SlidersHorizontal, X, Users } from "lucide-react";
+import { useState } from "react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Grade } from "@/lib/types";
-import type { Alumni } from "@/lib/types";
-import { fetchAllAlumni } from "@/lib/supabase";
-import { AllAlumniModal } from "./all-alumni-modal";
 
 const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+"];
 const WORK_MODES = ["all", "remote", "hybrid", "onsite"] as const;
-
-const TOP_COMPANIES = ["Google", "Microsoft", "Amazon", "Databricks", "Meta", "Deloitte"];
 
 export interface FilterState {
   search: string;
@@ -28,8 +23,6 @@ interface FiltersSidebarProps {
   onChange: (f: FilterState) => void;
   totalShowing: number;
   totalAll: number;
-  studentName?: string;
-  studentUniversity?: string;
 }
 
 export function FiltersSidebar({
@@ -37,22 +30,7 @@ export function FiltersSidebar({
   onChange,
   totalShowing,
   totalAll,
-  studentName,
-  studentUniversity,
 }: FiltersSidebarProps) {
-  const [alumni, setAlumni] = useState<Alumni[] | null>(null);
-  const [alumniOpen, setAlumniOpen] = useState(false);
-  const fetchedRef = useRef(false);
-
-  const handleViewAll = async () => {
-    if (!fetchedRef.current) {
-      fetchedRef.current = true;
-      const data = await fetchAllAlumni(studentUniversity);
-      setAlumni(data);
-    }
-    setAlumniOpen(true);
-  };
-
   const toggleGrade = (grade: Grade) => {
     const next = new Set(filters.grades);
     if (next.has(grade)) next.delete(grade);
@@ -225,52 +203,7 @@ export function FiltersSidebar({
           </label>
         </div>
 
-        {/* Alumni Network */}
-        <div className="border-t border-white/10 pt-4">
-          <h3 className="text-white font-semibold mb-3 flex items-center gap-2 text-sm">
-            <Users className="w-4 h-4 text-violet-400" />
-            Alumni Network
-          </h3>
-
-          <div className="space-y-2">
-            <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
-              <p className="text-sm text-white font-medium">47+ Alumni Available</p>
-              <p className="text-xs text-slate-400 mt-1">
-                Connect with Campbellsville, Northeastern, Houston alumni at top companies
-              </p>
-            </div>
-
-            <p className="text-xs text-slate-500">Top Companies:</p>
-            <div className="flex flex-wrap gap-1">
-              {TOP_COMPANIES.map((c) => (
-                <span
-                  key={c}
-                  className="bg-white/5 border border-white/10 text-slate-300 rounded px-2 py-0.5 text-xs"
-                >
-                  {c}
-                </span>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={handleViewAll}
-              className="w-full mt-2 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              View All Alumni
-            </button>
-          </div>
-        </div>
       </div>
-
-      {/* View All Alumni modal */}
-      {alumniOpen && alumni !== null && (
-        <AllAlumniModal
-          alumni={alumni}
-          studentName={studentName ?? "You"}
-          onClose={() => setAlumniOpen(false)}
-        />
-      )}
     </aside>
   );
 }

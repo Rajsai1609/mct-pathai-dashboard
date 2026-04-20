@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { StatsCards } from "./stats-cards";
 import { JobCard } from "./job-card";
 import { FiltersSidebar, type FilterState } from "./filters-sidebar";
 import { ApplicationsBoard } from "./applications-board";
-import type { JobMatch, Grade, JobApplication, ApplicationStatus } from "@/lib/types";
-import { updateStudentTracks, upsertApplication, removeApplication } from "@/lib/supabase";
+import { AlumniTab } from "./alumni-tab";
+import type { JobMatch, Grade, JobApplication, ApplicationStatus, Alumni } from "@/lib/types";
+import { updateStudentTracks, upsertApplication, removeApplication, fetchAllAlumni } from "@/lib/supabase";
 
 interface DashboardClientProps {
   jobs: JobMatch[];
@@ -27,7 +28,7 @@ const DEFAULT_FILTERS: FilterState = {
   verifiedH1BOnly: false,
 };
 
-type Tab = "jobs" | "saved" | "board";
+type Tab = "jobs" | "saved" | "board" | "alumni";
 
 export function DashboardClient({
   jobs,
@@ -42,10 +43,21 @@ export function DashboardClient({
   const [currentTracks, setCurrentTracks] = useState<string[]>(roleTracks);
   const [trackSaved, setTrackSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("jobs");
+  const [alumni, setAlumni] = useState<Alumni[] | null>(null);
+  const alumniRef = useRef(false);
 
   const [applications, setApplications] = useState<Map<string, ApplicationStatus>>(
     () => new Map(initialApplications.map((a) => [a.job_id, a.status])),
   );
+
+  const handleTabChange = async (tab: Tab) => {
+    setActiveTab(tab);
+    if (tab === "alumni" && !alumniRef.current) {
+      alumniRef.current = true;
+      const data = await fetchAllAlumni(studentUniversity);
+      setAlumni(data);
+    }
+  };
 
   const handleTracksChange = async (newTracks: string[]) => {
     setCurrentTracks(newTracks);
@@ -120,7 +132,7 @@ export function DashboardClient({
       {/* Tabs */}
       <div className="flex items-center gap-1 border-b border-white/10 pb-0">
         <button
-          onClick={() => setActiveTab("jobs")}
+          onClick={() => handleTabChange("jobs")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
             activeTab === "jobs"
               ? "border-violet-500 text-white"
@@ -131,7 +143,7 @@ export function DashboardClient({
           <span className="ml-2 text-xs text-slate-500">{jobs.length}</span>
         </button>
         <button
-          onClick={() => setActiveTab("saved")}
+          onClick={() => handleTabChange("saved")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
             activeTab === "saved"
               ? "border-violet-500 text-white"
@@ -146,7 +158,7 @@ export function DashboardClient({
           )}
         </button>
         <button
-          onClick={() => setActiveTab("board")}
+          onClick={() => handleTabChange("board")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
             activeTab === "board"
               ? "border-violet-500 text-white"
@@ -160,9 +172,24 @@ export function DashboardClient({
             </span>
           )}
         </button>
+        <button
+          onClick={() => handleTabChange("alumni")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activeTab === "alumni"
+              ? "border-violet-500 text-white"
+              : "border-transparent text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          👥 Alumni Network
+          {alumni !== null && (
+            <span className="ml-2 text-xs text-slate-500">{alumni.length}</span>
+          )}
+        </button>
       </div>
 
-      {activeTab === "saved" ? (
+      {activeTab === "alumni" ? (
+        <AlumniTab alumni={alumni} studentName={studentName} />
+      ) : activeTab === "saved" ? (
         <div className="space-y-6">
           {/* Pipeline stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -214,8 +241,6 @@ export function DashboardClient({
             onChange={setFilters}
             totalShowing={filtered.length}
             totalAll={jobs.length}
-            studentName={studentName}
-            studentUniversity={studentUniversity}
           />
 
           <div className="flex-1 min-w-0">
