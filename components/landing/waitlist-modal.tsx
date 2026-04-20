@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { uploadResume, submitWaitlist } from "@/lib/supabase";
+import { ROLE_TRACK_OPTIONS } from "@/lib/role-tracks";
 
 const VISA_OPTIONS = [
   { value: "opt",      label: "OPT" },
@@ -26,7 +27,7 @@ interface WaitlistModalProps {
 
 export function WaitlistModal({ onClose }: WaitlistModalProps) {
   const [form, setForm] = useState({
-    name: "", email: "", phone: "", visa_status: "", target_role: "",
+    name: "", email: "", phone: "", visa_status: "", target_role: "", role_track: "",
   });
   const [file, setFile]         = useState<File | null>(null);
   const [fileErr, setFileErr]   = useState("");
@@ -59,7 +60,7 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.phone || !form.visa_status || !file) return;
+    if (!form.name || !form.email || !form.phone || !form.visa_status || !form.role_track || !file) return;
 
     // Phase 1 — upload resume
     setPhase("uploading");
@@ -192,6 +193,27 @@ export function WaitlistModal({ onClose }: WaitlistModalProps) {
                   <option value="" disabled className="bg-slate-900">Select visa status…</option>
                   {VISA_OPTIONS.map(o => (
                     <option key={o.value} value={o.value} className="bg-slate-900">{o.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Role track */}
+              <div>
+                <label className="text-slate-400 text-xs font-medium mb-1.5 block">
+                  Target Role Track <span className="text-violet-400">*</span>
+                </label>
+                <select
+                  value={form.role_track}
+                  onChange={set("role_track")}
+                  required
+                  disabled={isLoading}
+                  className="flex h-9 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 disabled:opacity-50"
+                >
+                  <option value="" disabled className="bg-slate-900">Select your target role…</option>
+                  {ROLE_TRACK_OPTIONS.filter(o => o.value !== "general").map(o => (
+                    <option key={o.value} value={o.value} className="bg-slate-900">
+                      {o.icon} {o.label}
+                    </option>
                   ))}
                 </select>
               </div>

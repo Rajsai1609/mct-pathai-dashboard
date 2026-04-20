@@ -20,6 +20,7 @@ export interface WaitlistEntry {
   phone: string;
   visa_status: string;
   target_role: string;
+  role_track?: string;
   resume_url?: string;
 }
 
@@ -122,7 +123,7 @@ export async function fetchStudent(studentId: string): Promise<Student | null> {
   if (!client) return null;
   const { data, error } = await client
     .from("students")
-    .select("id, name, email")
+    .select("id, name, email, role_track")
     .eq("id", studentId)
     .single();
   if (error) {
@@ -130,6 +131,23 @@ export async function fetchStudent(studentId: string): Promise<Student | null> {
     return null;
   }
   return data as Student;
+}
+
+export async function updateStudentTrack(
+  studentId: string,
+  roleTrack: string,
+): Promise<boolean> {
+  const client = getClient();
+  if (!client) return false;
+  const { error } = await client
+    .from("students")
+    .update({ role_track: roleTrack })
+    .eq("id", studentId);
+  if (error) {
+    console.error("updateStudentTrack:", error.message);
+    return false;
+  }
+  return true;
 }
 
 const USA_KEYWORDS = new Set([

@@ -2,9 +2,9 @@
 
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Grade } from "@/lib/types";
+import { getTrackMeta, ROLE_TRACK_OPTIONS } from "@/lib/role-tracks";
 
 const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+"];
 const WORK_MODES = ["all", "remote", "hybrid", "onsite"] as const;
@@ -23,6 +23,8 @@ interface FiltersSidebarProps {
   onChange: (f: FilterState) => void;
   totalShowing: number;
   totalAll: number;
+  roleTrack: string;
+  onTrackChange: (track: string) => void;
 }
 
 export function FiltersSidebar({
@@ -30,7 +32,11 @@ export function FiltersSidebar({
   onChange,
   totalShowing,
   totalAll,
+  roleTrack,
+  onTrackChange,
 }: FiltersSidebarProps) {
+  const track = getTrackMeta(roleTrack);
+
   const toggleGrade = (grade: Grade) => {
     const next = new Set(filters.grades);
     if (next.has(grade)) next.delete(grade);
@@ -63,6 +69,29 @@ export function FiltersSidebar({
           >
             <X className="w-3 h-3" /> Reset
           </button>
+        </div>
+
+        {/* Role track */}
+        <div className="mb-5">
+          <label className="text-slate-400 text-xs font-medium mb-2 block uppercase tracking-wider">
+            Role Track
+          </label>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-base">{track.icon}</span>
+            <span className="text-purple-400 text-sm font-medium">{track.label}</span>
+          </div>
+          <select
+            value={roleTrack}
+            onChange={(e) => onTrackChange(e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+          >
+            {ROLE_TRACK_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value} className="bg-slate-900">
+                {o.icon} {o.label}
+              </option>
+            ))}
+          </select>
+          <p className="text-slate-600 text-xs mt-1">Changing track retunes your matches</p>
         </div>
 
         {/* Result count */}

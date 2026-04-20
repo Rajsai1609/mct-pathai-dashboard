@@ -5,10 +5,13 @@ import { StatsCards } from "./stats-cards";
 import { JobCard } from "./job-card";
 import { FiltersSidebar, type FilterState } from "./filters-sidebar";
 import type { JobMatch, Grade } from "@/lib/types";
+import { updateStudentTrack } from "@/lib/supabase";
 
 interface DashboardClientProps {
   jobs: JobMatch[];
   studentName: string;
+  studentId: string;
+  roleTrack: string;
 }
 
 const DEFAULT_FILTERS: FilterState = {
@@ -20,8 +23,19 @@ const DEFAULT_FILTERS: FilterState = {
   verifiedH1BOnly: false,
 };
 
-export function DashboardClient({ jobs, studentName }: DashboardClientProps) {
+export function DashboardClient({
+  jobs,
+  studentName,
+  studentId,
+  roleTrack,
+}: DashboardClientProps) {
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [currentTrack, setCurrentTrack] = useState(roleTrack);
+
+  const handleTrackChange = async (newTrack: string) => {
+    setCurrentTrack(newTrack);
+    await updateStudentTrack(studentId, newTrack);
+  };
 
   const filtered = useMemo(() => {
     return jobs.filter((job) => {
@@ -65,6 +79,8 @@ export function DashboardClient({ jobs, studentName }: DashboardClientProps) {
           onChange={setFilters}
           totalShowing={filtered.length}
           totalAll={jobs.length}
+          roleTrack={currentTrack}
+          onTrackChange={handleTrackChange}
         />
 
         {/* Job grid */}
