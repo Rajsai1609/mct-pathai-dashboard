@@ -4,8 +4,6 @@ import { ArrowLeft, User } from "lucide-react";
 import { fetchStudent, fetchStudentJobs, fetchApplications } from "@/lib/supabase";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { getLogoGradient } from "@/lib/utils";
-import { getTrackMeta, getTracksDisplay } from "@/lib/role-tracks";
-
 // Next.js 15+: params is a Promise — must be awaited
 interface PageProps {
   params: Promise<{ student_id: string }>;
@@ -35,9 +33,6 @@ export default async function DashboardPage({ params }: PageProps) {
   const activeTracks = (student.role_tracks && student.role_tracks.length > 0)
     ? student.role_tracks
     : (student.role_track && student.role_track !== "general" ? [student.role_track] : []);
-  const trackDisplays = activeTracks.length > 0
-    ? getTracksDisplay(activeTracks)
-    : [getTrackMeta(student.role_track)];
 
   return (
     <main className="min-h-screen bg-[#0f172a]">
@@ -74,12 +69,6 @@ export default async function DashboardPage({ params }: PageProps) {
               <p className="text-slate-400 text-sm">
                 AI-ranked jobs personalized for your profile
               </p>
-              {trackDisplays.map((t, i) => (
-                <span key={i} className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-xs">
-                  <span>{t.icon}</span>
-                  <span className="text-purple-400 font-medium">{t.label}</span>
-                </span>
-              ))}
             </div>
           </div>
         </div>
