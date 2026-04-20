@@ -192,6 +192,7 @@ export function DashboardClient({
                   status={applications.get(job.id) ?? null}
                   onStatusChange={handleStatusChange}
                   statusDropdown
+                  roleTracks={currentTracks}
                 />
               ))}
             </div>
@@ -228,6 +229,7 @@ export function DashboardClient({
                     job={job}
                     status={applications.get(job.id) ?? null}
                     onStatusChange={handleStatusChange}
+                    roleTracks={currentTracks}
                   />
                 ))}
               </div>

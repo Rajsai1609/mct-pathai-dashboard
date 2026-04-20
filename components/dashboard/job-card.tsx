@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
 import { cn, GRADE_BG } from "@/lib/utils";
 import type { JobMatch, ApplicationStatus } from "@/lib/types";
+import { getMatchedTrack } from "@/lib/role-tracks";
 
 const COMPANY_COLORS: Record<string, string> = {
   "databricks": "bg-red-500",
@@ -80,13 +81,17 @@ interface JobCardProps {
   status?: ApplicationStatus | null;
   onStatusChange?: (jobId: string, status: ApplicationStatus | null) => void;
   statusDropdown?: boolean;
+  roleTracks?: string[];
 }
 
-export function JobCard({ job, status, onStatusChange, statusDropdown }: JobCardProps) {
+export function JobCard({ job, status, onStatusChange, statusDropdown, roleTracks }: JobCardProps) {
   const isRemote = job.work_mode === "remote";
   const isHybrid = job.work_mode === "hybrid";
   const freshness = getFreshnessBadge(job.date_posted);
   const isSaved = status != null;
+  const matchedTrack = roleTracks && roleTracks.length > 1
+    ? getMatchedTrack(`${job.title} ${job.job_category ?? ""}`, roleTracks)
+    : null;
 
   return (
     <div className="glass glass-hover rounded-2xl p-4 flex flex-col gap-3">
@@ -157,6 +162,13 @@ export function JobCard({ job, status, onStatusChange, statusDropdown }: JobCard
           </Badge>
         )}
       </div>
+
+      {/* Matched track badge — only shown when student has multiple tracks */}
+      {matchedTrack && (
+        <div className="text-xs text-purple-400 flex items-center gap-1">
+          Matched via: {matchedTrack.icon} {matchedTrack.label}
+        </div>
+      )}
 
       {/* Line 5: Status pills or dropdown */}
       {onStatusChange && (
