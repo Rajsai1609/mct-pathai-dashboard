@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import { MapPin, ExternalLink, CheckCircle2, XCircle, ChevronDown, Users } from "lucide-react";
+import { MapPin, ExternalLink, CheckCircle2, XCircle, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScoreRing } from "./score-ring";
@@ -167,21 +167,6 @@ export function JobCard({ job, status, onStatusChange, roleTracks: _roleTracks, 
           </Badge>
         )}
       </div>
-
-      {/* Alumni badge */}
-      <button
-        type="button"
-        onClick={handleAlumniClick}
-        className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition-colors w-fit"
-      >
-        <Users className="w-3 h-3" />
-        {alumni === null
-          ? "👥 See alumni here"
-          : alumni.length === 0
-            ? "No alumni yet"
-            : `👥 ${alumni.length} alumni here`
-        }
-      </button>
 
       {/* Alumni modal */}
       {alumniOpen && alumni !== null && (
