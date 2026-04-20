@@ -214,9 +214,6 @@ export function DashboardClient({
             onChange={setFilters}
             totalShowing={filtered.length}
             totalAll={jobs.length}
-            roleTracks={currentTracks}
-            onTracksChange={handleTracksChange}
-            trackSaved={trackSaved}
           />
 
           <div className="flex-1 min-w-0">

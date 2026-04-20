@@ -1,10 +1,9 @@
 "use client";
 
-import { Search, SlidersHorizontal, X, Plus } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Grade } from "@/lib/types";
-import { ROLE_TRACK_OPTIONS } from "@/lib/role-tracks";
 
 const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+"];
 const WORK_MODES = ["all", "remote", "hybrid", "onsite"] as const;
@@ -18,16 +17,11 @@ export interface FilterState {
   verifiedH1BOnly: boolean;
 }
 
-const MAX_TRACKS = 3;
-
 interface FiltersSidebarProps {
   filters: FilterState;
   onChange: (f: FilterState) => void;
   totalShowing: number;
   totalAll: number;
-  roleTracks: string[];
-  onTracksChange: (tracks: string[]) => void;
-  trackSaved?: boolean;
 }
 
 export function FiltersSidebar({
@@ -35,14 +29,7 @@ export function FiltersSidebar({
   onChange,
   totalShowing,
   totalAll,
-  roleTracks,
-  onTracksChange,
-  trackSaved,
 }: FiltersSidebarProps) {
-  const addableOptions = ROLE_TRACK_OPTIONS.filter(
-    (o) => o.value !== "general" && !roleTracks.includes(o.value),
-  );
-
   const toggleGrade = (grade: Grade) => {
     const next = new Set(filters.grades);
     if (next.has(grade)) next.delete(grade);
@@ -75,71 +62,6 @@ export function FiltersSidebar({
           >
             <X className="w-3 h-3" /> Reset
           </button>
-        </div>
-
-        {/* Role tracks */}
-        <div className="mb-5">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-slate-400 text-xs font-medium uppercase tracking-wider">
-              Role Tracks
-            </label>
-            <span className="text-xs text-slate-500">
-              {roleTracks.length}/{MAX_TRACKS}
-            </span>
-          </div>
-
-          {/* Selected track pills */}
-          <div className="flex flex-wrap gap-1.5 mb-2">
-            {roleTracks.length === 0 && (
-              <span className="text-slate-600 text-xs italic">No tracks selected</span>
-            )}
-            {roleTracks.map((t) => {
-              const meta = ROLE_TRACK_OPTIONS.find((o) => o.value === t);
-              return (
-                <span
-                  key={t}
-                  className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-600/20 border border-violet-500/40 text-xs text-violet-300"
-                >
-                  <span>{meta?.icon}</span>
-                  <span>{meta?.label ?? t}</span>
-                  <button
-                    onClick={() => onTracksChange(roleTracks.filter((x) => x !== t))}
-                    className="ml-0.5 text-violet-400 hover:text-white transition-colors"
-                    aria-label={`Remove ${meta?.label ?? t}`}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              );
-            })}
-          </div>
-
-          {/* Add track dropdown */}
-          {roleTracks.length < MAX_TRACKS && addableOptions.length > 0 && (
-            <div className="relative">
-              <select
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) onTracksChange([...roleTracks, e.target.value]);
-                }}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-400 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 appearance-none"
-              >
-                <option value="" className="bg-slate-900">+ Add a track…</option>
-                {addableOptions.map((o) => (
-                  <option key={o.value} value={o.value} className="bg-slate-900">
-                    {o.icon} {o.label}
-                  </option>
-                ))}
-              </select>
-              <Plus className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500" />
-            </div>
-          )}
-
-          <p className="text-slate-600 text-xs mt-1.5">
-            {trackSaved
-              ? "✓ Tracks saved — new matches on next pipeline run"
-              : "Select up to 3 tracks to boost matching"}
-          </p>
         </div>
 
         {/* Result count */}
