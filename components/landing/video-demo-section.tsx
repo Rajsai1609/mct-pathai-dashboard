@@ -1,3 +1,5 @@
+import { Play } from "lucide-react";
+
 export function VideoDemoSection() {
   return (
     <section className="py-24">
@@ -12,32 +14,13 @@ export function VideoDemoSection() {
           <p className="text-slate-400">See how it works</p>
         </div>
 
-        <div
-          style={{
-            position: "relative",
-            paddingBottom: "56.25%",
-            height: 0,
-            overflow: "hidden",
-            maxWidth: "900px",
-            margin: "0 auto",
-            borderRadius: "12px",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
-          }}
-        >
-          <iframe
-            src="https://www.youtube.com/embed/2bnLf-qEMRg?rel=0&modestbranding=1"
-            title="MCT PathAI Product Demo"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-            }}
-          />
+        <div className="max-w-4xl mx-auto aspect-video glass rounded-2xl border border-violet-500/15 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-20 h-20 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center mx-auto mb-4">
+              <Play className="w-9 h-9 text-violet-400 ml-1" />
+            </div>
+            <p className="text-slate-400 text-sm">Demo video coming soon</p>
+          </div>
         </div>
       </div>
     </section>
