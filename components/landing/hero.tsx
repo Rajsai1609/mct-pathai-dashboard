@@ -20,15 +20,6 @@ export function Hero({ jobCount = 0, betaFull = false }: HeroProps) {
 
   return (
     <>
-      {/* Beta closed banner */}
-      {betaFull && (
-        <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-y border-red-500/30 py-3 px-4 text-center">
-          <p className="text-white font-semibold text-sm md:text-base">
-            🔴 Beta CLOSED (50/50 users) · Premium services now available from $299
-          </p>
-        </div>
-      )}
-
       {/* Urgency bar */}
       {!betaFull && (
         <div className="bg-amber-500/10 border-b border-amber-500/20 py-2.5 px-6 text-center">
