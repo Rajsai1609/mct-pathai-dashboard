@@ -113,7 +113,7 @@ export function DemoDashboardsSection() {
 
         <div className="text-center mt-8">
           <Link
-            href="/signup"
+            href="/premium"
             className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold hover:scale-105 transition-transform"
           >
             View Premium Services →

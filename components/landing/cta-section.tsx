@@ -88,7 +88,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
             {isFull ? (
               <div className="flex flex-col items-center gap-2 mt-2">
                 <Link
-                  href="/signup"
+                  href="/premium"
                   className="inline-block bg-gradient-to-r from-purple-500 to-blue-500
                              text-white px-10 py-4 rounded-xl font-bold text-lg
                              hover:opacity-90 hover:scale-[1.03] transition-all
