@@ -53,7 +53,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
 
             <p className="text-slate-400 mb-6 max-w-lg mx-auto">
               {isFull
-                ? "Beta is currently full. Upgrade to a premium plan for immediate access, or join the free waitlist for when spots reopen."
+                ? "Beta is currently full. Upgrade to a premium plan for immediate access and start matching with H1B sponsors today."
                 : `Join ${studentCount} international students already using MCT PathAI. Only ${remaining} FREE beta spot${remaining === 1 ? "" : "s"} left.`}
             </p>
 
@@ -100,17 +100,6 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
                   Skip the waitlist · Plans from $299
                 </p>
 
-                <button
-                  onClick={() => setOpen(true)}
-                  className="mt-3 border border-white/20 text-slate-300
-                             hover:text-white hover:border-white/40
-                             px-8 py-3 rounded-xl font-medium text-base transition-all"
-                >
-                  Join Free Waitlist →
-                </button>
-                <p className="text-slate-500 text-xs">
-                  We open new spots every Monday
-                </p>
               </div>
             ) : (
               <>

@@ -119,7 +119,7 @@ export function DemoDashboardsSection() {
             View Premium Services →
           </Link>
           <p className="text-xs text-gray-500 mt-3">
-            Beta is full (50/50) · Premium plans from $299
+            50 students in beta · Premium plans from $299
           </p>
         </div>
       </div>
