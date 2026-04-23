@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Flame, Users, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WaitlistModal } from "./waitlist-modal";
@@ -52,7 +53,7 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
 
             <p className="text-slate-400 mb-6 max-w-lg mx-auto">
               {isFull
-                ? "Our beta is currently full. Join the waitlist and we'll notify you as soon as a spot opens up."
+                ? "Beta is currently full. Upgrade to a premium plan for immediate access, or join the free waitlist for when spots reopen."
                 : `Join ${studentCount} international students already using MCT PathAI. Only ${remaining} FREE beta spot${remaining === 1 ? "" : "s"} left.`}
             </p>
 
@@ -84,15 +85,43 @@ export function CtaSection({ studentCount }: CtaSectionProps) {
               </div>
             )}
 
-            <Button variant="gradient" size="lg" onClick={() => setOpen(true)}>
-              {isFull ? "Join Waitlist →" : "Claim Your Free Spot →"}
-            </Button>
+            {isFull ? (
+              <div className="flex flex-col items-center gap-2 mt-2">
+                <Link
+                  href="/signup"
+                  className="inline-block bg-gradient-to-r from-purple-500 to-blue-500
+                             text-white px-10 py-4 rounded-xl font-bold text-lg
+                             hover:opacity-90 hover:scale-[1.03] transition-all
+                             shadow-lg shadow-purple-500/20"
+                >
+                  View Premium Services →
+                </Link>
+                <p className="text-slate-400 text-sm">
+                  Skip the waitlist · Plans from $299
+                </p>
 
-            <p className="text-slate-500 text-xs mt-4">
-              {isFull
-                ? "Beta is full — you'll be notified when spots open."
-                : "No credit card · Takes 30 seconds · Powered by MCTechnology LLC"}
-            </p>
+                <button
+                  onClick={() => setOpen(true)}
+                  className="mt-3 border border-white/20 text-slate-300
+                             hover:text-white hover:border-white/40
+                             px-8 py-3 rounded-xl font-medium text-base transition-all"
+                >
+                  Join Free Waitlist →
+                </button>
+                <p className="text-slate-500 text-xs">
+                  We open new spots every Monday
+                </p>
+              </div>
+            ) : (
+              <>
+                <Button variant="gradient" size="lg" onClick={() => setOpen(true)}>
+                  Claim Your Free Spot →
+                </Button>
+                <p className="text-slate-500 text-xs mt-4">
+                  No credit card · Takes 30 seconds · Powered by MCTechnology LLC
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>

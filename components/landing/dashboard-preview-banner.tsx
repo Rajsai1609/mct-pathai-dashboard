@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const FEATURES = [
   {
     label: "✅ Your Match Score",
@@ -32,12 +34,15 @@ export function DashboardPreviewBanner() {
         ))}
       </div>
 
-      <a
-        href="#waitlist"
+      <Link
+        href="/signup"
         className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold hover:scale-105 transition-transform"
       >
-        Claim Your FREE Dashboard →
-      </a>
+        View Premium Services →
+      </Link>
+      <p className="text-slate-400 text-sm mt-3">
+        Beta is full (50/50) · Premium plans starting at $299
+      </p>
     </div>
   );
 }
