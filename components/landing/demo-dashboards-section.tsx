@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface FeaturedStudentCardProps {
   name: string;
   role: string;
@@ -110,14 +112,14 @@ export function DemoDashboardsSection() {
         </div>
 
         <div className="text-center mt-8">
-          <a
-            href="#waitlist"
+          <Link
+            href="/signup"
             className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold hover:scale-105 transition-transform"
           >
-            Get Your Own Dashboard FREE →
-          </a>
+            View Premium Services →
+          </Link>
           <p className="text-xs text-gray-500 mt-3">
-            44 students already using MCT PathAI · 6 free spots left
+            Beta is full (50/50) · Premium plans from $299
           </p>
         </div>
       </div>
