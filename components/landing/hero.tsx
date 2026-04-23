@@ -8,9 +8,10 @@ import { WaitlistModal } from "./waitlist-modal";
 
 interface HeroProps {
   jobCount?: number;
+  betaFull?: boolean;
 }
 
-export function Hero({ jobCount = 0 }: HeroProps) {
+export function Hero({ jobCount = 0, betaFull = false }: HeroProps) {
   const [open, setOpen] = useState(false);
 
   const jobBadge = jobCount > 0
@@ -19,13 +20,24 @@ export function Hero({ jobCount = 0 }: HeroProps) {
 
   return (
     <>
+      {/* Beta closed banner */}
+      {betaFull && (
+        <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-y border-red-500/30 py-3 px-4 text-center">
+          <p className="text-white font-semibold text-sm md:text-base">
+            🔴 Beta CLOSED (50/50 users) · Premium services now available from $299
+          </p>
+        </div>
+      )}
+
       {/* Urgency bar */}
-      <div className="bg-amber-500/10 border-b border-amber-500/20 py-2.5 px-6 text-center">
-        <p className="text-amber-300 text-sm font-medium">
-          ⏰ Time matters — the average OPT student has{" "}
-          <span className="font-bold text-amber-200">90 days</span> to find a job after graduation
-        </p>
-      </div>
+      {!betaFull && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20 py-2.5 px-6 text-center">
+          <p className="text-amber-300 text-sm font-medium">
+            ⏰ Time matters — the average OPT student has{" "}
+            <span className="font-bold text-amber-200">90 days</span> to find a job after graduation
+          </p>
+        </div>
+      )}
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-glow">
         {/* Background grid */}
@@ -61,9 +73,18 @@ export function Hero({ jobCount = 0 }: HeroProps) {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-            <Button variant="gradient" size="lg" onClick={() => setOpen(true)}>
-              Start Matching Jobs Free <ArrowRight className="w-5 h-5" />
-            </Button>
+            {betaFull ? (
+              <Link
+                href="/signup"
+                className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition-all"
+              >
+                View Premium Services →
+              </Link>
+            ) : (
+              <Button variant="gradient" size="lg" onClick={() => setOpen(true)}>
+                Start Matching Jobs Free <ArrowRight className="w-5 h-5" />
+              </Button>
+            )}
             <Button variant="outline" size="lg" asChild>
               <Link href="#how-it-works">See How It Works</Link>
             </Button>

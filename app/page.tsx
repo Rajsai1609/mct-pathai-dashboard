@@ -57,7 +57,7 @@ export default async function HomePage() {
 
       <div className="pt-14">
         {/* 1 — Hero */}
-        <Hero jobCount={jobCount} />
+        <Hero jobCount={jobCount} betaFull={studentCount >= 50} />
 
         {/* 2 — Hero stats */}
         <StatsSection />
