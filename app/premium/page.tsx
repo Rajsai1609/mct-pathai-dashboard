@@ -8,7 +8,9 @@ interface Tier {
   name: string
   price: string
   billing: string
+  feeDisclosure?: string   // rendered under billing line; only for tiers with a success fee
   tagline: string
+  successFeeBullet?: string // rendered at top of feature list in amber; only for fee tiers
   features: string[]
   popular: boolean
 }
@@ -34,7 +36,9 @@ const TIERS: Tier[] = [
     name: 'Application Engine',
     price: '$299',
     billing: 'per month',
+    feeDisclosure: '+ 8% success fee when you land a job',
     tagline: 'We manually apply to 50 hand-picked jobs for you every month',
+    successFeeBullet: '8% success fee — only when you accept a job offer',
     features: [
       '50 hand-picked, tailored applications per month',
       'Manual applying (same approach our 50 beta users used)',
@@ -49,7 +53,9 @@ const TIERS: Tier[] = [
     name: 'Complete Career Package',
     price: '$399 + $249/mo',
     billing: 'Bundle — save $100 upfront + $50/mo ongoing',
+    feeDisclosure: '+ 8% success fee when you land a job',
     tagline: 'Everything in Master Resume + Application Engine, bundled',
+    successFeeBullet: '8% success fee — only when you accept a job offer',
     features: [
       'Everything in Master Resume (regularly $499 → $399)',
       'Everything in Application Engine (regularly $299/mo → $249/mo)',
@@ -61,9 +67,16 @@ const TIERS: Tier[] = [
   },
 ]
 
+const SUCCESS_FEE_POINTS = [
+  'Only charged after you accept a full-time offer sourced through our daily applications',
+  'Calculated on base salary + guaranteed bonuses (excludes stock/RSUs and sign-on bonuses)',
+  'Payable after your first paycheck — never upfront',
+  'No offer? No success fee. You can cancel Tier 2 or Tier 3 anytime',
+]
+
 export default function PremiumPage() {
   return (
-    <div className="min-h-screen bg-[#0f172a]">
+    <div className="min-h-screen bg-[#0f172a] flex flex-col">
       <nav className="border-b border-white/5 py-4 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <span className="text-white font-bold text-lg">
@@ -78,7 +91,8 @@ export default function PremiumPage() {
         </div>
       </nav>
 
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 py-16 flex-1">
+        {/* Page header */}
         <div className="text-center mb-14">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Pick Your Path Forward
@@ -89,6 +103,7 @@ export default function PremiumPage() {
           </p>
         </div>
 
+        {/* Tier cards */}
         <div className="grid md:grid-cols-3 gap-6 items-stretch">
           {TIERS.map((tier) => (
             <div
@@ -120,11 +135,23 @@ export default function PremiumPage() {
               <div className="mb-1">
                 <span className="text-4xl font-black text-white">{tier.price}</span>
               </div>
-              <p className="text-slate-500 text-xs mb-3">{tier.billing}</p>
+              <p className="text-slate-500 text-xs mb-1">{tier.billing}</p>
+
+              {tier.feeDisclosure && (
+                <p className="text-amber-500/80 text-xs mb-3">{tier.feeDisclosure}</p>
+              )}
+              {!tier.feeDisclosure && <div className="mb-3" />}
 
               <p className="text-slate-300 text-sm leading-relaxed mb-8">{tier.tagline}</p>
 
               <ul className="space-y-2.5 mb-10 flex-1">
+                {/* Success fee bullet — top of list, amber styled */}
+                {tier.successFeeBullet && (
+                  <li className="flex items-start gap-2.5 text-sm">
+                    <Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-amber-300/80">{tier.successFeeBullet}</span>
+                  </li>
+                )}
                 {tier.features.map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-sm">
                     <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
@@ -148,13 +175,35 @@ export default function PremiumPage() {
           ))}
         </div>
 
-        <div className="mt-12 flex items-start justify-center gap-2 text-slate-500 text-sm text-center">
+        {/* About the 8% success fee */}
+        <div className="mt-12 bg-white/[0.03] border border-amber-500/20 rounded-2xl p-8 max-w-3xl mx-auto">
+          <h2 className="text-white font-bold text-base mb-5">About the 8% success fee</h2>
+          <ul className="space-y-3">
+            {SUCCESS_FEE_POINTS.map((point) => (
+              <li key={point} className="flex items-start gap-3 text-sm text-slate-300">
+                <Check className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Reassurance bar */}
+        <div className="mt-8 flex items-start justify-center gap-2 text-slate-500 text-sm text-center">
           <span className="mt-0.5">🔒</span>
           <span>
             Spots are limited. Our team contacts you within 12–24 hours for a free 15-minute
             consultation before any payment.
           </span>
         </div>
+      </div>
+
+      {/* Globixs partnership attribution */}
+      <div className="border-t border-white/5 py-6 px-6 text-center">
+        <p className="text-xs text-slate-600 max-w-2xl mx-auto">
+          MCT PathAI is an MCTechnology LLC product. Resume builds and daily applications are
+          delivered in partnership with Globixs Technology Solutions.
+        </p>
       </div>
     </div>
   )

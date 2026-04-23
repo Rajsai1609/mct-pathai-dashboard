@@ -51,14 +51,19 @@ function JoinForm() {
   const tierParam = searchParams.get('tier') ?? ''
   const tier = VALID_TIERS.includes(tierParam as TierKey) ? (tierParam as TierKey) : null
 
-  const [fullName, setFullName]         = useState('')
-  const [email, setEmail]               = useState('')
-  const [countryCode, setCountryCode]   = useState('+1')
-  const [phone, setPhone]               = useState('')
-  const [visaStatus, setVisaStatus]     = useState('')
-  const [visaOther, setVisaOther]       = useState('')
-  const [submitting, setSubmitting]     = useState(false)
-  const [error, setError]               = useState('')
+  // Tiers 2 and 3 require explicit acknowledgment of the 8% success fee
+  const requiresFeeAck =
+    tier === 'tier_2_application_engine' || tier === 'tier_3_complete_package'
+
+  const [fullName, setFullName]           = useState('')
+  const [email, setEmail]                 = useState('')
+  const [countryCode, setCountryCode]     = useState('+1')
+  const [phone, setPhone]                 = useState('')
+  const [visaStatus, setVisaStatus]       = useState('')
+  const [visaOther, setVisaOther]         = useState('')
+  const [feeAcknowledged, setFeeAcknowledged] = useState(false)
+  const [submitting, setSubmitting]       = useState(false)
+  const [error, setError]                 = useState('')
 
   useEffect(() => {
     if (!tier) router.replace('/premium')
@@ -74,12 +79,13 @@ function JoinForm() {
     const fullPhone = `${countryCode}${phone.trim()}`
 
     const { error: insertErr } = await supabase.from('premium_leads').insert({
-      full_name:         fullName.trim(),
-      email:             email.trim().toLowerCase(),
-      phone:             fullPhone,
-      visa_status:       visaStatus,
-      visa_status_other: visaStatus === 'other' ? visaOther.trim() || null : null,
-      selected_tier:     tier,
+      full_name:                  fullName.trim(),
+      email:                      email.trim().toLowerCase(),
+      phone:                      fullPhone,
+      visa_status:                visaStatus,
+      visa_status_other:          visaStatus === 'other' ? visaOther.trim() || null : null,
+      selected_tier:              tier,
+      success_fee_acknowledged:   feeAcknowledged,
     })
 
     if (insertErr) {
@@ -93,12 +99,13 @@ function JoinForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          full_name:     fullName.trim(),
-          email:         email.trim().toLowerCase(),
-          phone:         fullPhone,
-          visa_status:   visaStatus,
-          selected_tier: tier,
-          created_at:    new Date().toISOString(),
+          full_name:                fullName.trim(),
+          email:                    email.trim().toLowerCase(),
+          phone:                    fullPhone,
+          visa_status:              visaStatus,
+          selected_tier:            tier,
+          success_fee_acknowledged: feeAcknowledged,
+          created_at:               new Date().toISOString(),
         }),
       })
     } catch {
@@ -233,6 +240,25 @@ function JoinForm() {
             )}
           </div>
 
+          {/* Success fee acknowledgment — Tier 2 and Tier 3 only */}
+          {requiresFeeAck && (
+            <div className="bg-amber-500/5 border border-amber-500/25 rounded-xl p-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={feeAcknowledged}
+                  onChange={e => setFeeAcknowledged(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 flex-shrink-0 cursor-pointer accent-violet-500"
+                />
+                <span className="text-slate-300 text-sm leading-relaxed">
+                  I understand that Tier 2 and Tier 3 include a one-time 8% success fee on
+                  accepted offers sourced through the applications pipeline. Tier 1 has no
+                  success fee.
+                </span>
+              </label>
+            </div>
+          )}
+
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-xl">
               {error}
@@ -241,7 +267,7 @@ function JoinForm() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || (requiresFeeAck && !feeAcknowledged)}
             className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 disabled:opacity-50 text-white py-3.5 rounded-xl font-semibold transition-opacity text-sm"
           >
             {submitting ? (
